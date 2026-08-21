@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Remit-to-Own</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --bg:#0b0e14; --card:#141924; --line:#232a39; --fg:#e6e9ef; --dim:#8b93a7;
+    --on:#3fb984; --off:#e2455a; --acc:#4a9df8; --gold:#e0a83a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#05070b; color:var(--fg);
+    font:16px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .slide { width:1280px; height:720px; padding:58px 80px; position:relative;
+    background:var(--bg); overflow:hidden; page-break-after:always; break-after:page;
+    display:flex; flex-direction:column; justify-content:center; }
+  .slide:last-child { page-break-after:auto; break-after:auto; }
+  .kicker { color:var(--acc); font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-size:13px; }
+  h1 { font-size:56px; line-height:1.05; letter-spacing:-.02em; margin:14px 0; }
+  h2 { font-size:38px; letter-spacing:-.02em; margin:6px 0 20px; }
+  p.lead { font-size:22px; max-width:62ch; }
+  .dim { color:var(--dim); }
+  ul { list-style:none; display:flex; flex-direction:column; gap:13px; margin-top:12px; }
+  li { font-size:20px; padding-left:28px; position:relative; }
+  li::before { content:"▸"; color:var(--acc); position:absolute; left:0; }
+  .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px; }
+  .c { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; }
+  .c h3 { font-size:19px; margin-bottom:8px; }
+  .c p { font-size:15px; color:var(--dim); }
+  .num { font-size:14px; color:var(--acc); font-weight:700; margin-bottom:6px; }
+  .mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:38px; align-items:center; flex:1; }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:10px 20px; font-size:18px; }
+  .kv .k { color:var(--dim); }
+  .flow { display:flex; align-items:center; gap:12px; margin-top:18px; flex-wrap:wrap; }
+  .step { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px; font-size:15px; }
+  .arrow { color:var(--acc); font-size:22px; }
+  .center { justify-content:center; align-items:center; text-align:center; }
+  table { width:100%; border-collapse:collapse; margin-top:14px; font-size:17px; }
+  th,td { text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); }
+  th { color:var(--dim); font-weight:600; font-size:14px; text-transform:uppercase; letter-spacing:.08em; }
+  .pill { display:inline-block; padding:3px 12px; border-radius:999px; font-weight:800; font-size:14px; }
+  .p-on { background:rgba(63,185,132,.16); color:var(--on); }
+  .p-off { background:rgba(226,69,90,.16); color:var(--off); }
+  .p-own { background:rgba(224,168,58,.16); color:var(--gold); }
+  .big { font-size:88px; font-weight:800; letter-spacing:-.03em; line-height:1; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide center">
+  <div class="kicker">BUIDL CTC 2026 Fall</div>
+  <h1>Remit-to-Own</h1>
+  <p class="lead dim">A relative abroad pays on Ethereum.<br>The motorcycle here stays switched on.</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">The situation</div>
+  <h2>Two ordinary things that do not fit together</h2>
+  <div class="grid2">
+    <ul>
+      <li>Buying a motorcycle or a solar panel on installments is normal across much of the world.</li>
+      <li>Having a relative abroad cover those payments is just as normal.</li>
+      <li>But the seller is at home and the money is abroad, and neither side can see the other's ledger.</li>
+      <li>So the gap gets filled by remittance operators and local agents, who each take a cut and each have to be trusted.</li>
+    </ul>
+    <div class="c">
+      <div class="num">TODAY</div>
+      <h3>Nobody can check</h3>
+      <p>The shop cannot see the transfer. The family cannot see the account. Somebody in the middle tells both sides what happened, and charges for it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide center">
+  <div class="kicker">The idea</div>
+  <h1 style="max-width:20ch">Let the payment prove itself.</h1>
+  <p class="lead dim">Each plan gets its own collection address on Ethereum.<br>
+     Attestcoin proves the transfer to Creditcoin, and the device answers to that proof alone.</p>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">How it behaves</div>
+  <h2>Pay more, it runs longer. Stop, it stops.</h2>
+  <div class="cards">
+    <div class="c"><div class="num">PAY</div><h3>Time, by the second</h3>
+      <p>Send a third of an installment or four at once. Service extends in proportion, so small sums are never rounded away.</p></div>
+    <div class="c"><div class="num">STOP</div><h3>It simply switches off</h3>
+      <p>No default, no collections, no chasing. The device stops working, which is how pay-as-you-go financing already works in the field.</p></div>
+    <div class="c"><div class="num">FINISH</div><h3>It becomes yours</h3>
+      <p>When the price is covered, ownership transfers and it never switches off again.</p></div>
+  </div>
+  <p class="lead dim" style="margin-top:26px;font-size:19px">Nothing is lent, so nothing has to be recovered. That is what keeps this design standing where cross-chain credit ideas fall over.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">Attestcoin is the whole mechanism</div>
+  <h2>From a transfer abroad to a device that works</h2>
+  <div class="flow">
+    <div class="step">Relative sends USDC<br><span class="dim">on Ethereum</span></div>
+    <div class="arrow">→</div>
+    <div class="step">Inclusion proof<br><span class="mono dim">ProofBuilder API</span></div>
+    <div class="arrow">→</div>
+    <div class="step">verifyAndEmit<br><span class="mono dim">precompile 0x…0FD2</span></div>
+    <div class="arrow">→</div>
+    <div class="step">Credit the plan<br><span class="dim">device stays on</span></div>
+  </div>
+  <ul style="margin-top:30px">
+    <li>A stablecoin transfer carries no memo, so each plan is issued its own collection address. That is what tells the contract whose payment it is.</li>
+    <li>Invalid proof and the call reverts. No proof, no payment, no service.</li>
+    <li>A replay guard means the same payment can never be counted twice, verified live on chain.</li>
+    <li><b>Remove Attestcoin and there is no way for Creditcoin to know the money ever moved.</b></li>
+  </ul>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">It already works, on CC3 testnet</div>
+  <h2>Driven by real Ethereum mainnet payments</h2>
+  <table>
+    <tr><th>Plan</th><th>Payments proven</th><th>State</th></tr>
+    <tr><td>Delivery truck, 50,000 USDC</td><td class="mono">23.48 · 1,490.71 · 97.47 · 107.41</td><td><span class="pill p-on">RUNNING</span> 25 days bought</td></tr>
+    <tr><td>Motorcycle, 1,800 USDC</td><td class="mono">89.42, then the balance</td><td><span class="pill p-own">OWNED</span> paid off</td></tr>
+    <tr><td>Solar home system, 800 USDC</td><td class="mono">eight real transfers</td><td><span class="pill p-own">OWNED</span> paid off</td></tr>
+  </table>
+  <p class="lead dim" style="margin-top:24px;font-size:18px">Not simulated. Each of these is a genuine USDC transfer on Ethereum mainnet, proven on Creditcoin through the BlockProver precompile. Anyone can re-check the state with one <span class="mono">cast call</span>.</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">Built to be attacked</div>
+  <h2>An adversarial audit, and what it found</h2>
+  <div class="grid2">
+    <ul>
+      <li><b>Two critical holes.</b> Naming an address you do not control as your collector, and any accepted token paying any plan. Both closed.</li>
+      <li><b>A bug only live data could find.</b> Real payment transactions are often swaps carrying a second token, which the first version rejected outright. Four of six real payments died before the fix.</li>
+      <li><b>38 tests, all passing.</b> 23 on behaviour, 15 regression tests, one per attack.</li>
+      <li>The precompile is never mocked. It is exercised against real Ethereum transactions.</li>
+    </ul>
+    <div class="c">
+      <div class="num">THE LESSON</div>
+      <h3>A proof shows what happened, not who owns what</h3>
+      <p>Attestcoin proves a transfer took place. It cannot prove whose address received it. Treating the second as though it followed from the first was the critical bug, and the fix is a restriction, not a cleverer proof.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">Why Creditcoin</div>
+  <h2>Money that already moves, on a chain that wants it</h2>
+  <div class="grid2">
+    <div>
+      <div class="big" style="color:var(--acc)">$700B</div>
+      <p class="lead" style="margin-top:12px">reached low and middle income countries as remittances in 2024, much of it to households buying exactly these assets on installments.</p>
+      <p class="dim" style="margin-top:10px;font-size:13px">World Bank, Migration and Development Brief</p>
+    </div>
+    <ul>
+      <li>Creditcoin exists to connect real-world credit to on-chain rails. This is that, for a purchase people already make.</li>
+      <li>Ethereum is where the stablecoins are. Attestcoin is how Creditcoin can finally see them.</li>
+      <li>The merchant needs no crypto knowledge: they read one boolean, <span class="mono">isActive</span>.</li>
+      <li>Every payment settles as on-chain history for a household that had none.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">Honest scope</div>
+  <h2>What is built, and what is not</h2>
+  <div class="grid2">
+    <div class="c">
+      <div class="num">BUILT AND VERIFIED</div>
+      <h3>The full loop</h3>
+      <p>Contract on CC3, proof relay, device status page, Telegram alerts. Real mainnet payments proven end to end, with an audit regression suite behind it.</p>
+    </div>
+    <ul>
+      <li>The device lock is on-chain state. Wiring it to a real controller is a hardware integration, not this submission.</li>
+      <li>Attestation lags the source chain by about nine minutes by design. For monthly financing that is immaterial.</li>
+      <li>Collection addresses are issued by the operator, because nothing on chain can prove who an address belongs to. The roadmap replaces that with escrow addresses the protocol deploys itself.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide center">
+  <h1>Send money. Keep it running.</h1>
+  <p class="lead dim">Remit-to-Own. Device financing that answers to a proof instead of a middleman.</p>
+  <p class="mono dim" style="margin-top:24px;font-size:14px">RemitToOwn · 0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223 · Creditcoin CC3</p>
+</section>
+
+</body>
+</html>

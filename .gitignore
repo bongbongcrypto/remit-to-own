@@ -1,0 +1,55 @@
+# Secrets
+.env*
+!.env.example
+.alert.env
+.wallet.env
+wallet.json
+*.key
+*.pem
+id_rsa*
+*.mnemonic
+*-session-cookie*
+
+# Binaries
+*.exe
+*.bin
+*.dll
+*.so
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+target/
+.cargo/
+
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# Logs / Cache
+*.log
+logs/
+.cache/
+*.sqlite
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Other-agent local state
+.codex/
+.gemini/
+.cursor/
+.aider*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project artifacts
+.last-sync

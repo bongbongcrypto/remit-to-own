@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Remit-to-Own</title>
+<style>
+  :root {
+    --bg:#0b0e14; --card:#141924; --line:#232a39; --fg:#e6e9ef; --dim:#8b93a7;
+    --on:#3fb984; --off:#e2455a; --owned:#4a9df8; --acc:#4a9df8;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:15px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--dim); margin:0 0 24px; font-size:14px; }
+  .row { display:flex; gap:8px; margin-bottom:6px; }
+  input { flex:1; background:var(--card); border:1px solid var(--line); color:var(--fg);
+    border-radius:8px; padding:11px 13px; font-size:14px; font-family:ui-monospace,monospace; }
+  button { background:var(--acc); color:#06101f; border:0; border-radius:8px;
+    padding:11px 18px; font-size:14px; font-weight:600; cursor:pointer; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:22px; margin-top:18px; }
+  .head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .badge { display:inline-block; padding:5px 14px; border-radius:999px; font-weight:800;
+    font-size:13px; letter-spacing:.4px; }
+  .b-on { background:rgba(63,185,132,.15); color:var(--on); }
+  .b-off { background:rgba(226,69,90,.15); color:var(--off); }
+  .b-owned { background:rgba(74,157,248,.15); color:var(--owned); }
+  .bar { height:9px; background:#1b2130; border-radius:999px; overflow:hidden; margin:18px 0 8px; }
+  .fill { height:100%; background:linear-gradient(90deg,#3fb984,#4a9df8); transition:width .4s; }
+  .kv { display:grid; grid-template-columns:150px 1fr; gap:8px 16px; margin-top:16px; font-size:14px; }
+  .kv div:nth-child(odd) { color:var(--dim); }
+  .mono { font-family:ui-monospace,monospace; word-break:break-all; font-size:13px; }
+  .muted { color:var(--dim); font-size:13px; margin-top:16px; }
+  a { color:var(--acc); }
+  .err { color:var(--off); }
+  .pill { display:inline-block; background:#1b2130; border:1px solid var(--line); border-radius:6px;
+    padding:2px 8px; font-size:12px; color:var(--dim); margin-right:6px; cursor:pointer; }
+  .pill:hover { color:var(--fg); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Remit-to-Own</h1>
+  <p class="sub">A relative abroad pays on Ethereum. The device here stays switched on.
+     Every payment is proven on Creditcoin by the Attestcoin Protocol.</p>
+
+  <div class="row">
+    <input id="plan" placeholder="plan id (0x…)" spellcheck="false" />
+    <button id="go">Check device</button>
+  </div>
+  <div>
+    <span class="pill" data-p="0x79ca67dbdfdec625438afabb4bdc8080cb699c8fcec12f5c3a5c6f5af8f56c0d">delivery truck (paying)</span>
+    <span class="pill" data-p="0x2e73d5949dee6d8ea8588ec7a4e61731e7619dbc0d52552b27463ca108666ac6">motorcycle (paid off)</span>
+    <span class="pill" data-p="0xf309f0baf639e8646ad141f50907f187ddb800ff851ea86732913b67beeb8d80">solar home system</span>
+  </div>
+
+  <div id="out"></div>
+
+  <p class="muted">Contract <a id="clink" target="_blank" rel="noopener"></a> on Creditcoin CC3 testnet.
+     Pay more and it runs longer. Stop paying and it simply stops. Cover the price and it is yours.</p>
+</div>
+
+<script>
+const RPC = "https://rpc.cc3-testnet.creditcoin.network";
+const CONTRACT = "0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223";
+const EXPLORER = "https://creditcoin-testnet.blockscout.com/address/" + CONTRACT;
+const SEL_GET_PLAN = "0xa0f73826";  // getPlan(bytes32)
+const LEVELS = { ON: "b-on", OFF: "b-off", OWNED: "b-owned" };
+
+document.getElementById("clink").textContent = CONTRACT;
+document.getElementById("clink").href = EXPLORER;
+
+async function ethCall(data) {
+  const r = await fetch(RPC, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call",
+      params: [{ to: CONTRACT, data }, "latest"] }),
+  });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message || "eth_call failed");
+  return j.result;
+}
+
+function word(hex, i) { return hex.slice(i * 64, i * 64 + 64); }
+function toNum(h) { return BigInt("0x" + h); }
+function toAddr(h) { return "0x" + h.slice(24); }
+function usdc(v) { return (Number(v) / 1e6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+async function check() {
+  const out = document.getElementById("out");
+  const id = document.getElementById("plan").value.trim();
+  if (!/^0x[0-9a-fA-F]{64}$/.test(id)) {
+    out.innerHTML = '<div class="card err">Enter a 32-byte plan id (0x + 64 hex characters).</div>';
+    return;
+  }
+  out.innerHTML = '<div class="card">Reading the chain…</div>';
+  try {
+    // getPlan(bytes32) -> (buyer, merchant, collector, priceTotal, paid, activeUntil, active, settled)
+    const res = await ethCall(SEL_GET_PLAN + id.slice(2));
+    const h = res.replace(/^0x/, "");
+    if (h.length < 64 * 8) throw new Error("no such plan");
+    const collector = toAddr(word(h, 2));
+    const price = toNum(word(h, 3));
+    const paid = toNum(word(h, 4));
+    const activeUntil = Number(toNum(word(h, 5)));
+    const active = toNum(word(h, 6)) === 1n;
+    const settled = toNum(word(h, 7)) === 1n;
+    if (price === 0n) throw new Error("no such plan");
+
+    const state = settled ? "OWNED" : (active ? "ON" : "OFF");
+    const pct = Number((paid * 10000n) / price) / 100;
+    const now = Math.floor(Date.now() / 1000);
+    const daysLeft = active && !settled ? Math.floor((activeUntil - now) / 86400) : null;
+    const until = settled ? "yours, permanently"
+      : (active ? new Date(activeUntil * 1000).toISOString().slice(0, 10) : "switched off");
+
+    out.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div style="font-size:19px;font-weight:700">Device ${state === "OWNED" ? "owned outright" : (state === "ON" ? "running" : "switched off")}</div>
+          <span class="badge ${LEVELS[state]}">${state}</span>
+        </div>
+        <div class="bar"><div class="fill" style="width:${Math.min(pct, 100)}%"></div></div>
+        <div style="font-size:14px;color:var(--dim)">${usdc(paid)} of ${usdc(price)} USDC paid (${pct.toFixed(1)}%)</div>
+        <div class="kv">
+          <div>Still owed</div><div>${usdc(price - paid)} USDC</div>
+          <div>Runs until</div><div>${until}${daysLeft !== null ? ` (${daysLeft} days left)` : ""}</div>
+          <div>Pay to (Ethereum)</div><div class="mono">${collector}</div>
+          <div>Plan</div><div class="mono">${id}</div>
+        </div>
+        ${settled ? '<p class="muted">The full price is covered. This device never switches off again.</p>' : ''}
+      </div>`;
+  } catch (e) {
+    out.innerHTML = '<div class="card err">' + e.message + '</div>';
+  }
+}
+
+document.getElementById("go").addEventListener("click", check);
+document.getElementById("plan").addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+document.querySelectorAll(".pill").forEach(el => el.addEventListener("click", () => {
+  document.getElementById("plan").value = el.dataset.p; check();
+}));
+
+document.getElementById("plan").value = document.querySelector(".pill").dataset.p;
+check();
+</script>
+</body>
+</html>

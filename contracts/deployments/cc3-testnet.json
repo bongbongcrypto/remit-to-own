@@ -1,0 +1,10 @@
+{
+  "network": "cc3-testnet",
+  "chainId": 102031,
+  "rpc": "https://rpc.cc3-testnet.creditcoin.network",
+  "deployer": "0x79B2eeBb224332d16F837BF92C2EA2c833704c02",
+  "evmV1Decoder": "0x21f3e26A827F2e89c0F99B46da033F4b05D57fd8",
+  "remitToOwn": "0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223",
+  "remitToOwnDeployTx": "0xb861aa022450528523eb3059a6edde43a0aa7dc7f7db889b2341f99ded3282f7",
+  "explorer": "https://creditcoin-testnet.blockscout.com/address/0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223"
+}
