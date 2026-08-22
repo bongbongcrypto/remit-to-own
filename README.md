@@ -82,8 +82,7 @@ Creditcoin contract to know it.
         ▼
  decode receipt → ERC-20 Transfer logs → match collector → credit the plan
         │
-        ├──▶ web/   device status page
-        └──▶ bot/   "a payment just arrived, your device runs 30 more days"
+        └──▶ web/   status, plus a live alert the moment a payment lands
 ```
 
 Each proven transfer must clear every rule in `_creditTransferLog` to count as a
@@ -107,9 +106,10 @@ rejected on-chain.
   38 passing tests including an audit regression suite; deploy script.
 - **`relay/`**: Python. Watches a plan's collection address, fetches proofs, and
   submits them. Signs only on the build server, never on a developer machine.
-- **`web/`**: dependency-free device status page (hand-encoded `eth_call`).
-- **`bot/`**: Telegram bot: device status, and an alert the moment a relative's
-  payment is proven.
+- **`web/`**: dependency-free device page. Reads state with a hand-encoded
+  `eth_call` and watches the contract's own events, so a payment proven abroad
+  shows up here within a block, with no server in between.
+- **`bot/`**: optional Telegram interface to the same state.
 - **`docs/`**: technical documentation, security review, deck, demo script.
 
 ## Quickstart
@@ -143,8 +143,9 @@ CC3 testnet, so real mainnet payments are provable at no cost.
 - Attestation lags the source chain by roughly nine minutes by design, so a
   payment is credited shortly after it lands, not instantly. For monthly
   financing that gap does not matter.
-- The Telegram bot needs a dedicated token to run live; its chain reads, message
-  formatting, and event parsing are verified without one.
+- The page polls the chain directly, so there is no backend to run and nothing
+  to trust between the contract and the screen. The Telegram interface is
+  optional and needs a bot token; the web page needs nothing.
 
 ## License
 

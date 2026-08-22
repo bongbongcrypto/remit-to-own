@@ -17,7 +17,8 @@ proves.
 - `relay/` Python. Watches a plan's collection address, fetches proofs, submits.
 - `detector/` not used in this project; scanning lives in `relay/watch_plan.py`.
 - `web/` dependency-free status page, hand-encoded `eth_call`.
-- `bot/` Telegram device alerts.
+- `bot/` optional Telegram interface to the same state. The web page needs no
+  token and no backend, so it is the primary surface.
 - `docs/` technical documentation, security review, deck, demo script.
 
 ## Rules that matter here

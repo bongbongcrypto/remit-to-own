@@ -12,7 +12,8 @@ relative abroad (Ethereum)        relay (Python)              RemitToOwn (Solidi
                                                                 decode Transfer logs
                                                                 match collector -> plan
                                                                 credit + extend service
-                                                        ↘  web/ + bot/ read the result
+                                                        ↘  web/ reads state and
+                                                           watches the events
 ```
 
 Source chains are Ethereum **Sepolia** (chainKey 1) and **mainnet** (chainKey 3),
@@ -81,6 +82,19 @@ becomes `type(uint64).max`, so an owned device never switches off again.
 Both ProofBuilder hosts are used with failover:
 `prover.cc3-testnet.creditcoin.network` and
 `proof-gen-api.cc3-testnet.creditcoin.network`.
+
+### 2.4 The device page
+
+`web/index.html` has no build step, no framework, and no backend. It reads plan
+state with a hand-encoded `eth_call` and polls `eth_getLogs` for the contract's
+`PaymentProven` and `PlanSettled` events, filtered to the plan being viewed.
+
+That last part is the product, not decoration. The whole promise is that a
+payment made in another country becomes visible here without anyone in the
+middle deciding whether it did, so the page listens to the chain rather than to
+a server. When a payment is proven, an alert appears and the status refreshes;
+recent payments stay listed with their amounts, payers, and the block that
+proved them.
 
 ## 3. Deployment
 

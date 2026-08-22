@@ -58,8 +58,13 @@ Caption: "The merchant reads one boolean. That is the whole integration."
 
 > When the price is covered, the device is theirs and never switches off again.
 
-**2:20 The alert (Telegram).** Show the bot pushing a payment alert, then
-`/device 0x…`. Caption: "The family hears the moment it lands."
+**2:20 The alert, live.** This is the shot worth setting up properly. Leave the
+device page open on a plan with unproven payments waiting, run the relay in a
+second window, and let the alert appear on its own: the amount arrives, the
+status flips, the payment joins the list. Caption:
+
+> Nobody pushed this. The page is watching the chain, and the payment announced
+> itself.
 
 **2:30 Close.** Deck slide 10. Contract address on screen.
 
@@ -71,7 +76,9 @@ Caption: "The merchant reads one boolean. That is the whole integration."
   immediately, or the arc collapses into a single step.
 - Faucet balance topped up. Each proof costs a fraction of a cent, so this is
   only about having a non-zero balance.
-- Telegram bot running with a dedicated token, demo chat subscribed via `/start`.
+- Two windows: the device page, and a terminal for the relay. Nothing else is
+  needed, and no personal account appears anywhere on screen.
+- Alerts stay visible for twenty seconds, which is long enough to narrate.
 - Terminal font large enough to read at 720p. Window title and paths not
   revealing.
 - Deck open as a PDF in a separate window for the slide cuts.
