@@ -13,6 +13,7 @@ import json
 import os
 import time
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 
 from eth_account import Account
@@ -28,6 +29,29 @@ PROOF_HOSTS = [
 ROOT = Path(__file__).resolve().parent.parent
 ABI_PATH = ROOT / "contracts" / "out" / "RemitToOwn.sol" / "RemitToOwn.json"
 DEPLOY_PATH = ROOT / "contracts" / "deployments" / "cc3-testnet.json"
+
+
+# The service term saturates at uint64 max, and a plan that has never been paid
+# sits at zero. Neither is a calendar date: datetime raises on the first and
+# prints 1970 for the second, so both are worded by the caller instead.
+DATE_MIN = 1_600_000_000
+DATE_MAX = 253_402_300_799
+
+
+def fmt_until(ts, fmt: str = "%Y-%m-%d"):
+    """The date a service term ends, or None when the value is not a date."""
+    if ts is None or ts < DATE_MIN or ts > DATE_MAX:
+        return None
+    try:
+        return datetime.fromtimestamp(int(ts), timezone.utc).strftime(fmt)
+    except (OverflowError, OSError, ValueError):
+        return None
+
+
+def fmt_days(seconds) -> str:
+    """Whole days of service left, worded when the term is effectively endless."""
+    days = int(seconds) // 86400
+    return "indefinitely" if days > 36500 else f"{days}d"
 
 
 def http_get_json(url: str, timeout: int = 30, retries: int = 4):
@@ -111,7 +135,14 @@ def submit_payment(w3: Web3, rto, acct, chainkey: int, tx_hash: str) -> dict:
     # under-estimates the precompile cost by roughly 60 percent.
     try:
         gas = max(int(fn.estimate_gas({"from": acct.address}) * 1.35), 600_000)
-    except Exception:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
+        # A revert at estimation means the contract will refuse this payment:
+        # already proven, collector not registered, plan already settled.
+        # Submitting anyway spends a fee to arrive at the same answer, so say
+        # why instead. Anything else is a transport problem, so carry on.
+        msg = str(e)
+        if "revert" in msg.lower():
+            raise RuntimeError(f"contract would refuse this payment: {msg[:160]}") from e
         gas = 900_000
 
     base = w3.eth.get_block("latest").get("baseFeePerGas", w3.to_wei(0.5, "gwei"))

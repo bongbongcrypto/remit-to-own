@@ -78,6 +78,12 @@ becomes `type(uint64).max`, so an owned device never switches off again.
   gas with a 600k floor, signs EIP-1559, and waits for the receipt
 - `watch_plan.py` reads the plan's collector from the contract, scans the source
   chain for transfers into it, and proves each one
+- `fmt_until` and `fmt_days` are shared by the relay and the Telegram bot. A
+  service term is a `uint64` that saturates, and a plan that has never been paid
+  sits at zero. Neither is a calendar date: Python raises on the first and prints
+  1970 for the second, so both are worded. The web page carries the same rule.
+- A revert at gas estimation means the contract will refuse the payment, so the
+  relay says why rather than spending a fee to reach the same answer
 
 Both ProofBuilder hosts are used with failover:
 `prover.cc3-testnet.creditcoin.network` and
@@ -191,6 +197,18 @@ regression test in `test/RemitToOwnAudit.t.sol`.
 Deliberately **not** defended, because the design does not need it: default,
 delinquency, collateral, liquidation, credit scoring. Nothing is lent, so nothing
 must be recovered.
+
+Also not defended, and this one is a judgement call rather than a design
+consequence: `openPlan` does not require the instalment to be smaller than the
+price. An operator who set an instalment of one unit against a large price would
+buy a service term that saturates at `uint64` max, which is a nonsense plan but
+not an exploitable one, since issuing plans is an admin action and the money at
+risk is the operator's own. The guard is one line and belongs in the next
+deployment; adding it now would mean redeploying and abandoning the live
+contract that already holds thirteen proven mainnet payments, which is a poor
+trade this close to submission. The surfaces that read a plan word an
+unreachable date rather than printing one, so the edge is contained where it
+shows.
 
 ## 5. Field notes (measured)
 

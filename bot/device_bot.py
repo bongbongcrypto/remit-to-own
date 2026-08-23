@@ -19,7 +19,6 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "relay"))
@@ -73,9 +72,13 @@ def fmt_device(plan_hex: str) -> str:
         line = "It never switches off again."
     elif active:
         left = rto.functions.timeRemaining(plan_id).call()
-        until = datetime.fromtimestamp(active_until, timezone.utc).strftime("%d %b %Y")
+        until = R.fmt_until(active_until, "%d %b %Y")
         head = "🟢 <b>Device running</b>"
-        line = f"Runs {left // 86400} more days (until {until})."
+        line = (f"Runs {R.fmt_days(left)} more (until {until})." if until
+                else f"Runs {R.fmt_days(left)} more.")
+    elif active_until == 0:
+        head = "⚪ <b>Not started yet</b>"
+        line = "It runs as soon as the first payment is proven."
     else:
         head = "🔴 <b>Device switched off</b>"
         line = "A payment switches it straight back on."
@@ -151,10 +154,11 @@ def poll_alerts(state):
         if topic0 in (PAYMENT_TOPIC, PAYMENT_TOPIC.replace("0x", "")):
             ev = rto.events.PaymentProven().process_log(lg)
             a = ev["args"]
-            until = datetime.fromtimestamp(a["activeUntil"], timezone.utc).strftime("%d %b %Y")
+            until = R.fmt_until(a["activeUntil"], "%d %b %Y")
+            runs = f"Device runs until {until}." if until else "Device is running."
             text = (f"💸 <b>Payment proven</b>\n"
                     f"{usdc(a['amount'])} USDC arrived from Ethereum.\n"
-                    f"Device runs until {until}.\n"
+                    f"{runs}\n"
                     f"Paid so far: {usdc(a['paidTotal'])} USDC")
         elif topic0 in (SETTLED_TOPIC, SETTLED_TOPIC.replace("0x", "")):
             ev = rto.events.PlanSettled().process_log(lg)
