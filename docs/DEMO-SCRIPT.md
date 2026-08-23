@@ -8,12 +8,17 @@ the world stays switched on, with nobody in the middle deciding whether it did.*
 
 ## Shot list
 
-**0:00 Hook, the device page.** Open `web/index.html` on the delivery truck plan.
-It shows RUNNING, 1,719.07 of 50,000 USDC paid, 25 days left, and the Ethereum
-address to pay. Caption:
+**0:00 Hook, the device page.** Serve `web/` and open the delivery truck plan.
+It shows Running, 77,557.73 USDC still to pay of 80,000, paid up until 28
+September, one filled block out of forty instalments, and the Ethereum address
+to pay. Caption:
 
-> This truck is running because a relative sent 23 dollars, then 1,490, then 97,
-> then 107. Every one of those is a real Ethereum payment, proven on Creditcoin.
+> This truck is running because a relative sent 342 dollars, then 1,500, then
+> 599. Every one of those is a real Ethereum payment, proven on Creditcoin.
+
+Pin the theme and language for the recording if you want them fixed:
+`?theme=light` or `?theme=dark`, and the language buttons top right. The page
+remembers the language you pick.
 
 **0:20 The problem, one slide.** Deck slide 2. Caption:
 
@@ -53,8 +58,9 @@ cast call 0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223 \
 
 Caption: "The merchant reads one boolean. That is the whole integration."
 
-**2:05 Paid off.** Switch the page to the motorcycle plan: OWNED, 100 percent,
-"yours, permanently". Caption:
+**2:05 Paid off.** Switch the page to the motorcycle plan. The card inverts,
+every one of the twelve instalment blocks is filled, and there is no longer an
+address to pay to. Caption:
 
 > When the price is covered, the device is theirs and never switches off again.
 
@@ -70,8 +76,10 @@ status flips, the payment joins the list. Caption:
 
 ## Prep checklist
 
-- A plan with unproven payments waiting, so the OFF to ON transition happens live
-  on camera. Open a fresh plan shortly before recording and do not prove it yet.
+- A plan with unproven payments waiting, so the off to on transition happens live
+  on camera. `0xfe738d04cba29310772148d0324d0c82e8a82a6517211a91661be0977dbc79c1`
+  is already open, priced at 1,200 USDC with nothing paid, and shows as switched
+  off. Prove a payment into it while the page is on screen.
 - Price the plan high enough that one large transfer does not settle it
   immediately, or the arc collapses into a single step.
 - Faucet balance topped up. Each proof costs a fraction of a cent, so this is

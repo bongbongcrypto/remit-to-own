@@ -85,16 +85,62 @@ Both ProofBuilder hosts are used with failover:
 
 ### 2.4 The device page
 
-`web/index.html` has no build step, no framework, and no backend. It reads plan
-state with a hand-encoded `eth_call` and polls `eth_getLogs` for the contract's
-`PaymentProven` and `PlanSettled` events, filtered to the plan being viewed.
+`web/index.html` has no build step, no framework, and no backend. Everything on
+it is read from the chain:
+
+- **Plans discover themselves.** `planCount()` then `planIds(i)`, then
+  `getPlan` and `getPlanCurrency` for each, sent as one batched JSON-RPC call.
+  Nothing about a plan is hardcoded except the merchant's name for the asset,
+  which never existed on chain in the first place.
+- **History comes from the indexer.** The CC3 node enforces a ten second query
+  limit on `eth_getLogs`, which in practice caps a request at about 30,000
+  blocks and makes a full history scan impossible. Issuing the chunks in
+  parallel makes it worse, because the node serialises them and every chunk then
+  hits the timeout. So the complete `PaymentProven` history comes from
+  Blockscout's log API in a single request, which also carries block timestamps
+  the raw RPC does not.
+- **The live tail comes from the node.** Polling every twelve seconds scans only
+  the blocks since the last one seen, bounded to 20,000 per poll so a long gap
+  closes over several polls instead of failing, and guarded so a slow scan
+  cannot have another stacked on top of it.
 
 That last part is the product, not decoration. The whole promise is that a
 payment made in another country becomes visible here without anyone in the
 middle deciding whether it did, so the page listens to the chain rather than to
-a server. When a payment is proven, an alert appears and the status refreshes;
-recent payments stay listed with their amounts, payers, and the block that
-proved them.
+a server. When a payment is proven an alert appears, the figures move, and the
+payment joins the record.
+
+#### What the screen shows, and why
+
+The layout follows the disclosure rules the off-grid financing industry wrote
+for itself, because this product is the same bargain with a different payment
+rail. Sources are GOGLA's consumer protection briefing, CGAP's *Escaping
+Darkness* (n=138 households) and *Getting Repaid in Asset Finance*, and 60
+Decibels' 2024 off-grid survey (n=79,000+).
+
+- **The balance owed is the headline, not the amount paid.** The single most
+  repeated complaint in the CGAP interviews is that customers know what they
+  have paid and never learn what is left, which also blocks them from clearing
+  the balance when a lump sum arrives.
+- **Progress is counted in instalments, not percent.** Buyers judge these
+  purchases by the size of one instalment, so the track is one block per
+  instalment and the reader can count what remains.
+- **Switching off is amber, never red.** CGAP found that spending a few days in
+  the dark is a deliberate budgeting move, and that providers who treated it as
+  delinquency lost the customer. The page states the fact and the remedy without
+  shaming anybody.
+- **The lock notice states condition, consequence, and the exact remedy**, which
+  is the grammar of GOGLA's Key Facts Statement: it stops on this date, and this
+  amount buys this many days.
+- **Every payment row carries the four fields GOGLA requires** after a payment:
+  amount received, running total, balance left, and how long it is now paid up.
+  All four come straight out of the `PaymentProven` event.
+- **An overpayment says so.** The contract takes only what is still owed, so a
+  final transfer larger than the balance is credited in part; the row says the
+  rest was not charged rather than showing two numbers that disagree.
+
+Korean, Japanese, Chinese, and English are switchable, with dates and number
+formats following the chosen language rather than the browser's.
 
 ## 3. Deployment
 

@@ -16,9 +16,12 @@ proves.
   Two suites: product behaviour and an audit regression suite.
 - `relay/` Python. Watches a plan's collection address, fetches proofs, submits.
 - `detector/` not used in this project; scanning lives in `relay/watch_plan.py`.
-- `web/` dependency-free status page, hand-encoded `eth_call`.
+- `web/` dependency-free status page and the primary surface. Discovers plans
+  from the chain, reads state with hand-encoded `eth_call`, takes payment
+  history from the Blockscout log API and the live tail from the node. Korean,
+  Japanese, Chinese, English.
 - `bot/` optional Telegram interface to the same state. The web page needs no
-  token and no backend, so it is the primary surface.
+  token and no backend, so nothing depends on it.
 - `docs/` technical documentation, security review, deck, demo script.
 
 ## Rules that matter here
@@ -32,3 +35,7 @@ proves.
 - Every audit finding keeps a regression test. Do not delete one to make a build
   pass.
 - English for code, docs, and commits.
+- The page layout follows the off-grid financing industry's own disclosure rules
+  (GOGLA, CGAP, 60 Decibels). The reasoning is in `docs/TECHNICAL.md` 2.4. Do not
+  restyle balance, lock, or switched-off states without reading it: switched off
+  is amber and never red, and that is a finding, not a taste.

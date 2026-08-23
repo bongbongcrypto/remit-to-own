@@ -40,7 +40,10 @@ cast call 0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223 \
   --rpc-url https://rpc.cc3-testnet.creditcoin.network
 ```
 
-Or open `web/index.html`, which reads the same state straight from the chain.
+Or serve `web/` and open it in a browser. The page finds every plan on the
+contract by itself, shows what is left to pay, how many instalments remain, and
+where to send money, and it announces a payment the moment one is proven. Korean,
+Japanese, Chinese and English.
 
 ---
 
@@ -106,9 +109,12 @@ rejected on-chain.
   38 passing tests including an audit regression suite; deploy script.
 - **`relay/`**: Python. Watches a plan's collection address, fetches proofs, and
   submits them. Signs only on the build server, never on a developer machine.
-- **`web/`**: dependency-free device page. Reads state with a hand-encoded
-  `eth_call` and watches the contract's own events, so a payment proven abroad
-  shows up here within a block, with no server in between.
+- **`web/`**: dependency-free device page, no build step and no backend. Reads
+  state with a hand-encoded `eth_call` and watches the contract's own events, so
+  a payment proven abroad shows up here with no server in between. What it puts
+  on screen follows the disclosure rules the off-grid financing industry wrote
+  for itself, which is why the balance owed is the headline and a switched-off
+  device is never styled as a delinquency. Reasoning in `docs/TECHNICAL.md` 2.4.
 - **`bot/`**: optional Telegram interface to the same state.
 - **`docs/`**: technical documentation, security review, deck, demo script.
 

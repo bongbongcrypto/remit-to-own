@@ -4,284 +4,970 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Remit-to-Own</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Sans+JP:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap" />
 <style>
-  :root {
-    --bg:#0b0e14; --card:#141924; --line:#232a39; --fg:#e6e9ef; --dim:#8b93a7;
-    --on:#3fb984; --off:#e2455a; --owned:#4a9df8; --acc:#4a9df8;
-  }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg);
-    font:15px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 64px; }
-  h1 { font-size:22px; margin:0 0 4px; }
-  .sub { color:var(--dim); margin:0 0 24px; font-size:14px; }
-  .row { display:flex; gap:8px; margin-bottom:6px; }
-  input { flex:1; background:var(--card); border:1px solid var(--line); color:var(--fg);
-    border-radius:8px; padding:11px 13px; font-size:14px; font-family:ui-monospace,monospace; }
-  button { background:var(--acc); color:#06101f; border:0; border-radius:8px;
-    padding:11px 18px; font-size:14px; font-weight:600; cursor:pointer; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px;
-    padding:22px; margin-top:18px; }
-  .head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  .badge { display:inline-block; padding:5px 14px; border-radius:999px; font-weight:800;
-    font-size:13px; letter-spacing:.4px; }
-  .b-on { background:rgba(63,185,132,.15); color:var(--on); }
-  .b-off { background:rgba(226,69,90,.15); color:var(--off); }
-  .b-owned { background:rgba(74,157,248,.15); color:var(--owned); }
-  .bar { height:9px; background:#1b2130; border-radius:999px; overflow:hidden; margin:18px 0 8px; }
-  .fill { height:100%; background:linear-gradient(90deg,#3fb984,#4a9df8); transition:width .4s; }
-  .kv { display:grid; grid-template-columns:150px 1fr; gap:8px 16px; margin-top:16px; font-size:14px; }
-  .kv div:nth-child(odd) { color:var(--dim); }
-  .mono { font-family:ui-monospace,monospace; word-break:break-all; font-size:13px; }
-  .muted { color:var(--dim); font-size:13px; margin-top:16px; }
-  a { color:var(--acc); }
-  .err { color:var(--off); }
-  .pill { display:inline-block; background:#1b2130; border:1px solid var(--line); border-radius:6px;
-    padding:2px 8px; font-size:12px; color:var(--dim); margin-right:6px; cursor:pointer; }
-  .pill:hover { color:var(--fg); }
+/* ------------------------------------------------------------------ tokens */
+:root {
+  --paper:#f5f7fa; --card:#ffffff; --sunk:#eef1f6;
+  --ink:#101725; --ink2:#525d73; --ink3:#656e80;
+  --rule:#dfe5ee; --rule2:#eaeff5;
+  --accent:#1b45d6; --accent-soft:#e8edfd;
+  --on:#0a7355; --on-soft:#e2f2ec;
+  --off:#a2620a; --off-soft:#faeedb;
+  --own-bg:#101725; --own-fg:#f5f7fa; --own-dim:#9aa6bc;
+  --own-sunk:#1b2432; --own-rule:#2b3648; --own-fill:#5eead4;
+  --shadow:0 1px 2px rgba(16,23,37,.05), 0 8px 24px -12px rgba(16,23,37,.14);
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-cond:"IBM Plex Sans Condensed", var(--font-body);
+  --font-mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --lh:1.55;
+}
+html[lang="ko"] { --font-body:"IBM Plex Sans","IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif; --lh:1.68; }
+html[lang="ja"] { --font-body:"IBM Plex Sans","IBM Plex Sans JP","Yu Gothic",system-ui,sans-serif; --lh:1.72; }
+html[lang="zh"] { --font-body:"IBM Plex Sans","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif; --lh:1.72; }
+html[lang="ko"], html[lang="ja"], html[lang="zh"] { --font-cond:var(--font-body); }
 
-  /* live payment alerts */
-  #alerts { position:fixed; right:18px; bottom:18px; width:330px; display:flex;
-    flex-direction:column; gap:10px; z-index:50; }
-  .toast { background:var(--card); border:1px solid var(--on); border-left:4px solid var(--on);
-    border-radius:10px; padding:14px 16px; box-shadow:0 10px 34px rgba(0,0,0,.55);
-    animation:slide .45s ease; }
-  .toast.owned { border-color:var(--owned); border-left-color:var(--owned); }
-  .toast .t { font-weight:700; font-size:15px; margin-bottom:4px; }
-  .toast .d { font-size:13px; color:var(--dim); }
-  @keyframes slide { from { transform:translateX(24px); opacity:0 } to { transform:none; opacity:1 } }
-  .watch { display:flex; align-items:center; gap:8px; color:var(--dim); font-size:13px; margin-top:14px; }
-  .dot { width:8px; height:8px; border-radius:50%; background:var(--on); animation:pulse 1.6s infinite; }
-  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.25 } }
-  .feed { margin-top:16px; }
-  .feed h4 { font-size:13px; color:var(--dim); font-weight:600; text-transform:uppercase;
-    letter-spacing:.08em; margin-bottom:8px; }
-  .ev { display:flex; justify-content:space-between; gap:12px; padding:9px 0;
-    border-bottom:1px solid var(--line); font-size:14px; }
-  .ev .amt { color:var(--on); font-weight:700; font-family:ui-monospace,monospace; }
-  .ev .meta { color:var(--dim); font-size:12px; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:#0b0f16; --card:#131a25; --sunk:#0e141d;
+    --ink:#e9edf4; --ink2:#a2adc0; --ink3:#8d97ab;
+    --rule:#232c3b; --rule2:#1b2431;
+    --accent:#7f9fff; --accent-soft:#1a2440;
+    --on:#3ec495; --on-soft:#102a23;
+    --off:#e0a44a; --off-soft:#2b2213;
+    --own-bg:#f2f5fa; --own-fg:#101725; --own-dim:#56617a;
+    --own-sunk:#ffffff; --own-rule:#d8e0ec; --own-fill:#0a7355;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  --paper:#0b0f16; --card:#131a25; --sunk:#0e141d;
+  --ink:#e9edf4; --ink2:#a2adc0; --ink3:#8d97ab;
+  --rule:#232c3b; --rule2:#1b2431;
+  --accent:#7f9fff; --accent-soft:#1a2440;
+  --on:#3ec495; --on-soft:#102a23;
+  --off:#e0a44a; --off-soft:#2b2213;
+  --own-bg:#f2f5fa; --own-fg:#101725; --own-dim:#56617a;
+  --own-sunk:#ffffff; --own-rule:#d8e0ec; --own-fill:#0a7355;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+/* ------------------------------------------------------------------- base */
+*,*::before,*::after { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--font-body); font-size:15px; line-height:var(--lh);
+  -webkit-font-smoothing:antialiased; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.wrap { max-width:1080px; margin:0 auto; padding:0 28px 72px; }
+.mono { font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+.num { font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1; }
+.label { font-family:var(--font-cond); font-weight:600; font-size:11.5px;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--ink3); line-height:1.3; }
+
+/* --------------------------------------------------------------- masthead */
+header { border-bottom:1px solid var(--rule); background:var(--card); }
+.mast { max-width:1080px; margin:0 auto; padding:30px 28px 34px;
+  display:flex; flex-wrap:wrap; gap:20px 32px; align-items:flex-start;
+  justify-content:space-between; }
+.brand { display:flex; flex-direction:column; gap:12px; flex:1 1 34ch;
+  min-width:min(100%,30ch); }
+.wordmark { font-size:17px; font-weight:600; letter-spacing:.015em; line-height:1;
+  display:flex; align-items:center; gap:9px; color:var(--ink2); }
+.wordmark .dot { width:9px; height:9px; border-radius:50%; background:var(--accent);
+  flex:none; }
+.tagline { color:var(--ink); font-size:26px; font-weight:600;
+  letter-spacing:-.021em; line-height:1.28; max-width:26ch; margin:0;
+  text-wrap:balance; }
+html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
+  font-size:24px; line-height:1.42; max-width:24ch; }
+
+.langs { display:flex; gap:2px; padding:3px; background:var(--sunk);
+  border:1px solid var(--rule); border-radius:9px; flex:none; }
+.langs button { font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  border:0; background:transparent; color:var(--ink2);
+  padding:6px 12px; border-radius:6px; line-height:1.4; }
+.langs button:hover { color:var(--ink); }
+.langs button[aria-pressed="true"] { background:var(--card); color:var(--ink);
+  box-shadow:0 1px 2px rgba(16,23,37,.08); }
+
+/* ------------------------------------------------------------------ steps */
+.how { display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); border-radius:12px;
+  overflow:hidden; margin:26px 0 26px; }
+.step { background:var(--card); padding:20px 22px 22px; display:flex;
+  flex-direction:column; gap:7px; }
+.step .n { font-family:var(--font-mono); font-size:11px; font-weight:500;
+  color:var(--accent); letter-spacing:.04em; display:flex; align-items:center;
+  gap:8px; }
+.step .n::after { content:""; height:1px; flex:1; background:var(--rule); }
+.step h3 { margin:0; font-size:15.5px; font-weight:600; letter-spacing:-.008em;
+  text-wrap:balance; }
+.step p { margin:0; font-size:13.5px; color:var(--ink2); }
+
+/* ------------------------------------------------------------------ picker */
+.picker { display:flex; flex-wrap:wrap; gap:7px; align-items:center;
+  margin-bottom:18px; }
+.chip { font:inherit; font-size:13px; cursor:pointer; padding:7px 13px;
+  border-radius:999px; border:1px solid var(--rule); background:var(--card);
+  color:var(--ink2); display:inline-flex; align-items:center; gap:8px;
+  line-height:1.35; }
+.chip:hover { color:var(--ink); border-color:var(--ink3); }
+.chip[aria-pressed="true"] { background:var(--ink); border-color:var(--ink);
+  color:var(--paper); }
+.chip .tick { width:6px; height:6px; border-radius:50%; flex:none;
+  background:var(--on); }
+.chip[data-s="off"] .tick { background:var(--off); }
+.chip[data-s="owned"] .tick { background:var(--accent); }
+
+/* ---------------------------------------------------------------- columns */
+.cols { display:grid; grid-template-columns:1.35fr .85fr; gap:20px;
+  align-items:start; }
+@media (max-width:940px) { .cols { grid-template-columns:1fr; } }
+@media (max-width:720px) { .how { grid-template-columns:1fr; } }
+
+.panel { background:var(--card); border:1px solid var(--rule);
+  border-radius:14px; box-shadow:var(--shadow); }
+
+/* -------------------------------------------------------------- statement */
+.stmt { padding:24px 26px 26px; display:flex; flex-direction:column; gap:22px; }
+.stmt-top { display:flex; flex-wrap:wrap; gap:12px 16px;
+  justify-content:space-between; align-items:flex-start; }
+.asset { display:flex; flex-direction:column; gap:5px; }
+.asset .name { font-size:19px; font-weight:600; letter-spacing:-.014em; }
+.pill { display:inline-flex; align-items:center; gap:7px; align-self:flex-start;
+  padding:5px 12px 5px 10px; border-radius:999px; font-size:12.5px;
+  font-weight:600; line-height:1.4; white-space:nowrap; }
+.pill .led { width:7px; height:7px; border-radius:50%; flex:none;
+  background:currentColor; }
+.pill[data-s="on"] { background:var(--on-soft); color:var(--on); }
+.pill[data-s="off"] { background:var(--off-soft); color:var(--off); }
+.pill[data-s="owned"] { background:var(--accent-soft); color:var(--accent); }
+.substate { font-size:13.5px; color:var(--ink2); max-width:52ch; }
+
+.hero { display:flex; flex-direction:column; gap:9px; }
+.hero .figure { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; }
+.hero .amount { font-size:40px; font-weight:700; letter-spacing:-.028em;
+  line-height:1.02; font-variant-numeric:tabular-nums; }
+.hero .cur { font-size:16px; font-weight:600; color:var(--ink2); }
+.hero .under { font-size:13.5px; color:var(--ink2); display:flex;
+  flex-wrap:wrap; align-items:center; gap:0 10px; }
+.hero .under .sep { width:3px; height:3px; border-radius:50%;
+  background:var(--ink3); opacity:.6; flex:none; }
+
+/* Installments, not a percentage. Field research is blunt about this: buyers
+   judge these purchases by the size of one instalment, and the thing they can
+   never find out is how many are left. So the track is countable. */
+.track { display:flex; gap:2px; height:15px; }
+.track .seg { flex:1 1 0; border-radius:2px; background:var(--sunk);
+  border:1px solid var(--rule2); overflow:hidden; position:relative;
+  min-width:3px; }
+.track .seg::after { content:""; position:absolute; inset:0;
+  width:var(--f,0%); background:var(--accent);
+  transition:width .6s cubic-bezier(.22,.61,.36,1); }
+.track.plain { display:block; height:10px; border-radius:999px;
+  background:var(--sunk); overflow:hidden; border:1px solid var(--rule2); }
+.track.plain .fill { height:100%; background:var(--accent); border-radius:999px;
+  transition:width .6s cubic-bezier(.22,.61,.36,1); min-width:3px; }
+
+.facts { display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); border-radius:11px;
+  overflow:hidden; }
+@media (max-width:600px) {
+  .facts { grid-template-columns:repeat(2,1fr); }
+  /* keep the instalment blocks countable when the column narrows */
+  .track { gap:1px; height:13px; }
+  .track .seg { border-radius:1px; min-width:2px; }
+}
+.fact { background:var(--card); padding:13px 14px 14px; display:flex;
+  flex-direction:column; gap:5px; }
+.fact .v { font-size:15px; font-weight:600; font-variant-numeric:tabular-nums;
+  letter-spacing:-.006em; }
+.fact .v small { font-weight:400; color:var(--ink2); font-size:12.5px; }
+
+.lock { display:flex; gap:11px; padding:14px 16px; border-radius:11px;
+  background:var(--sunk); border:1px solid var(--rule2);
+  font-size:13.5px; color:var(--ink2); }
+.lock .mark { flex:none; width:18px; height:18px; margin-top:1px; }
+.lock strong { color:var(--ink); font-weight:600; }
+
+.payto { border:1px dashed var(--rule); border-radius:12px; padding:15px 16px;
+  display:flex; flex-direction:column; gap:10px; }
+.payto .addr-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.payto .addr { font-family:var(--font-mono); font-size:13.5px; font-weight:500;
+  word-break:break-all; flex:1 1 22ch; letter-spacing:-.01em; }
+.btn { font:inherit; font-size:12.5px; font-weight:600; cursor:pointer;
+  border:1px solid var(--rule); background:var(--sunk); color:var(--ink);
+  padding:7px 13px; border-radius:8px; flex:none; line-height:1.4; }
+.btn:hover { border-color:var(--ink3); }
+.payto .note { font-size:12.5px; color:var(--ink3); }
+
+/* Owned inverts the statement against whichever theme is showing: the meter has
+   stopped mattering, so the card stops looking like the rest of the page. */
+.panel[data-owned="1"] { background:var(--own-bg); border-color:var(--own-bg);
+  color:var(--own-fg); }
+.panel[data-owned="1"] .substate,
+.panel[data-owned="1"] .hero .under,
+.panel[data-owned="1"] .lock,
+.panel[data-owned="1"] .fact .v small { color:var(--own-dim); }
+.panel[data-owned="1"] .label { color:var(--own-dim); }
+.panel[data-owned="1"] .hero .cur { color:var(--own-dim); }
+.panel[data-owned="1"] .facts { background:var(--own-rule); }
+.panel[data-owned="1"] .fact { background:var(--own-sunk); }
+.panel[data-owned="1"] .lock { background:var(--own-sunk);
+  border-color:var(--own-rule); }
+.panel[data-owned="1"] .lock strong { color:var(--own-fg); }
+.panel[data-owned="1"] .track.plain { background:var(--own-rule);
+  border-color:var(--own-rule); }
+.panel[data-owned="1"] .track .seg { background:var(--own-sunk);
+  border-color:var(--own-rule); }
+.panel[data-owned="1"] .track .seg::after,
+.panel[data-owned="1"] .track .fill { background:var(--own-fill); }
+.panel[data-owned="1"] .pill[data-s="owned"] { background:var(--own-fill);
+  color:var(--own-bg); }
+.panel[data-owned="1"] .hero .under .sep { background:var(--own-dim); }
+
+/* ----------------------------------------------------------------- record */
+.rec-head { padding:17px 20px 15px; border-bottom:1px solid var(--rule);
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.rec-head .count { font-size:12.5px; color:var(--ink3);
+  font-variant-numeric:tabular-nums; }
+.rec-list { list-style:none; margin:0; padding:0; max-height:520px;
+  overflow-y:auto; }
+.rec-list li { padding:14px 20px; border-bottom:1px solid var(--rule2);
+  display:flex; flex-direction:column; gap:6px; }
+.rec-list li:last-child { border-bottom:0; }
+.rec-row { display:flex; justify-content:space-between; align-items:baseline;
+  gap:12px; }
+.rec-amt { font-size:15.5px; font-weight:600; font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em; }
+.rec-amt .plus { color:var(--on); }
+.rec-when { font-size:12px; color:var(--ink3); white-space:nowrap;
+  font-variant-numeric:tabular-nums; }
+.rec-meta { display:flex; justify-content:space-between; gap:12px;
+  font-size:12.5px; color:var(--ink2); flex-wrap:wrap; }
+.rec-meta .who { font-family:var(--font-mono); font-size:12px;
+  color:var(--ink3); }
+.rec-note { font-size:12px; color:var(--off); background:var(--off-soft);
+  padding:6px 9px; border-radius:7px; }
+.rec-empty { padding:26px 20px; color:var(--ink3); font-size:13.5px; }
+
+.side { display:flex; flex-direction:column; gap:20px; }
+.verify { padding:18px 20px 19px; display:flex; flex-direction:column; gap:12px; }
+.verify p { margin:0; font-size:13px; color:var(--ink2); }
+.verify dl { margin:0; display:grid; grid-template-columns:auto 1fr;
+  gap:8px 14px; align-items:baseline; }
+.verify dt { font-size:12.5px; color:var(--ink3); white-space:nowrap; }
+.verify dd { margin:0; font-family:var(--font-mono); font-size:12.5px;
+  text-align:right; word-break:break-all; }
+.rec-list li.fresh { animation:slide .5s cubic-bezier(.22,.61,.36,1); }
+@keyframes slide { from { opacity:0; transform:translateY(-8px); } }
+
+/* ----------------------------------------------------------------- toasts */
+.toasts { position:fixed; right:20px; bottom:20px; display:flex;
+  flex-direction:column; gap:9px; z-index:50; max-width:min(370px,calc(100vw - 40px)); }
+.toast { background:var(--ink); color:var(--paper); border-radius:12px;
+  padding:14px 16px; box-shadow:0 12px 32px -10px rgba(16,23,37,.55);
+  display:flex; flex-direction:column; gap:4px;
+  animation:pop .42s cubic-bezier(.22,.61,.36,1); }
+.toast .t { font-size:13.5px; font-weight:600; display:flex; gap:8px;
+  align-items:center; }
+.toast .t .led { width:7px; height:7px; border-radius:50%; background:#22e08d;
+  flex:none; }
+.toast .d { font-size:12.5px; color:#a9b4c8; }
+@keyframes pop { from { opacity:0; transform:translateY(10px) scale(.97); } }
+
+/* ----------------------------------------------------------------- footer */
+footer { margin-top:26px; padding-top:20px; border-top:1px solid var(--rule);
+  display:flex; flex-wrap:wrap; gap:8px 26px; font-size:12.5px;
+  color:var(--ink3); }
+footer .f { display:flex; gap:7px; align-items:baseline; }
+footer .mono { font-size:12px; }
+
+.err { padding:14px 16px; border-radius:11px; background:var(--off-soft);
+  color:var(--off); font-size:13.5px; }
+.skel { color:var(--ink3); font-size:13.5px; padding:26px 20px; }
+
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:.001ms !important;
+    transition-duration:.001ms !important; }
+}
 </style>
 </head>
 <body>
+
+<header>
+  <div class="mast">
+    <div class="brand">
+      <div class="wordmark"><span class="dot"></span>Remit-to-Own</div>
+      <p class="tagline" id="tagline"></p>
+    </div>
+    <div class="langs" role="group" id="langs" aria-label="Language"></div>
+  </div>
+</header>
+
 <div class="wrap">
-  <h1>Remit-to-Own</h1>
-  <p class="sub">A relative abroad pays on Ethereum. The device here stays switched on.
-     Every payment is proven on Creditcoin by the Attestcoin Protocol.</p>
+  <div class="how" id="how"></div>
+  <div class="picker" id="picker"></div>
 
-  <div class="row">
-    <input id="plan" placeholder="plan id (0x…)" spellcheck="false" />
-    <button id="go">Check device</button>
+  <div class="cols">
+    <section class="panel stmt" id="stmt" aria-live="polite">
+      <div class="skel" id="stmt-skel"></div>
+    </section>
+
+    <div class="side">
+    <section class="panel" aria-labelledby="rec-title">
+      <div class="rec-head">
+        <span class="label" id="rec-title"></span>
+        <span class="count" id="rec-count"></span>
+      </div>
+      <div id="rec-body"><div class="skel" id="rec-skel"></div></div>
+    </section>
+
+    <section class="panel verify" id="verify"></section>
+    </div>
   </div>
-  <div>
-    <span class="pill" data-p="0x79ca67dbdfdec625438afabb4bdc8080cb699c8fcec12f5c3a5c6f5af8f56c0d">delivery truck (paying)</span>
-    <span class="pill" data-p="0x2e73d5949dee6d8ea8588ec7a4e61731e7619dbc0d52552b27463ca108666ac6">motorcycle (paid off)</span>
-    <span class="pill" data-p="0xf309f0baf639e8646ad141f50907f187ddb800ff851ea86732913b67beeb8d80">solar home system</span>
-  </div>
 
-  <div id="out"></div>
-  <div class="watch"><span class="dot"></span> <span id="watchtext">watching Creditcoin for proven payments</span></div>
-  <div class="feed" id="feed"></div>
-
-  <p class="muted">Contract <a id="clink" target="_blank" rel="noopener"></a> on Creditcoin CC3 testnet.
-     Pay more and it runs longer. Stop paying and it simply stops. Cover the price and it is yours.</p>
+  <footer id="footer"></footer>
 </div>
-<div id="alerts"></div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
 <script>
+/* ==================================================================== i18n */
+const I18N = {
+  en: {
+    _name:"English", _locale:"en-GB",
+    tagline:"Someone abroad pays. The machine here keeps running.",
+    s1t:"A relative sends USDC",
+    s1b:"On Ethereum, to this plan's own collection address. No memo, no account number, no agent in the middle.",
+    s2t:"Creditcoin checks it really happened",
+    s2b:"An Attestcoin proof is verified on chain by a precompile. No company confirms the payment, and none can deny it.",
+    s3t:"The machine runs for the time that bought",
+    s3b:"Send more and it runs longer. Cover the full price and it belongs to the buyer for good.",
+    on:"Running", off:"Switched off", owned:"Owned outright",
+    subOn:"Paid up until {date}.",
+    subOff:"Stopped on {date}. It starts again the moment a payment is proven.",
+    subOwned:"Paid in full. It never switches off again.",
+    heroLeft:"Still to pay to own it", heroOwned:"Nothing left to pay",
+    paidOf:"{paid} paid of {total}", pct:"{n}% owned",
+    fRate:"Rate", fRateV:"{amt} buys {n} days",
+    fRuns:"Runs until", fRunsForever:"Never stops",
+    fInst:"Installments", fInstV:"{a} of {b}",
+    fPaid:"Payments proven",
+    lockOn:"If nothing more arrives it stops on <strong>{date}</strong>. Sending <strong>{amt}</strong> adds <strong>{n} days</strong>.",
+    lockOff:"It is off right now. Sending <strong>{amt}</strong> starts it again for <strong>{n} days</strong>.",
+    lockOwned:"Nothing can switch it off now.",
+    payTitle:"Send USDC on Ethereum to",
+    payNote:"This address belongs to this plan alone. That is how the contract knows whose payment it is.",
+    copy:"Copy", copied:"Copied",
+    recTitle:"Payment record", recEmpty:"No payment has been proven yet.",
+    recLoading:"Reading the chain", recCredited:"credited",
+    recLeftAfter:"{amt} left after this", recSettledRow:"Paid in full",
+    recCapped:"Only the outstanding balance was taken. The rest was not charged.",
+    recCount:"{n} proven",
+    toastT:"Payment proven", toastD:"{amt} arrived. {n} days added.",
+    toastOwnedT:"Paid in full", toastOwnedD:"The machine belongs to the buyer now.",
+    fContract:"Contract", fChain:"Creditcoin CC3 testnet",
+    fSource:"Payments proven from Ethereum mainnet", fExplorer:"View on explorer",
+    loading:"Loading plans from the chain",
+    errPlan:"Could not read this plan from the chain.",
+    plan:"Plan",
+    vTitle:"Check it yourself",
+    vBody:"Every number on this page is read straight from the contract. No server sits in between.",
+    vContract:"Contract", vPlan:"This plan", vProof:"Proof precompile"
+  },
+  ko: {
+    _name:"한국어", _locale:"ko-KR",
+    tagline:"해외에 있는 가족이 돈을 보내면 이곳의 기계가 계속 돌아갑니다.",
+    s1t:"가족이 USDC를 보냅니다",
+    s1b:"이더리움에서 이 플랜 전용 수금 주소로 보냅니다. 메모도 계좌번호도 중간에 낀 대리인도 필요 없습니다.",
+    s2t:"크레딧코인이 실제로 들어왔는지 확인합니다",
+    s2b:"Attestcoin 증명을 프리컴파일이 체인 위에서 검증합니다. 어느 회사도 입금을 확인해 주지 않고, 부인할 수도 없습니다.",
+    s3t:"보낸 만큼 기계가 돌아갑니다",
+    s3b:"많이 보내면 더 오래 돌아갑니다. 가격을 다 채우면 완전히 구매자의 것이 됩니다.",
+    on:"작동 중", off:"정지됨", owned:"소유 완료",
+    subOn:"{date}까지 사용료가 채워져 있습니다.",
+    subOff:"{date}에 멈췄습니다. 입금이 증명되는 즉시 다시 돌아갑니다.",
+    subOwned:"전액 납부됐습니다. 다시는 멈추지 않습니다.",
+    heroLeft:"소유까지 남은 금액", heroOwned:"남은 금액 없음",
+    paidOf:"{total} 중 {paid} 납부", pct:"{n}% 소유",
+    fRate:"요율", fRateV:"{amt}에 {n}일",
+    fRuns:"작동 기한", fRunsForever:"멈추지 않음",
+    fInst:"할부 회차", fInstV:"{b}회 중 {a}회",
+    fPaid:"증명된 납부",
+    lockOn:"더 들어오지 않으면 <strong>{date}</strong>에 멈춥니다. <strong>{amt}</strong>를 보내면 <strong>{n}일</strong>이 늘어납니다.",
+    lockOff:"지금 멈춰 있습니다. <strong>{amt}</strong>를 보내면 <strong>{n}일</strong> 동안 다시 돌아갑니다.",
+    lockOwned:"이제 무엇도 이 기계를 멈출 수 없습니다.",
+    payTitle:"이더리움에서 USDC를 보낼 주소",
+    payNote:"이 주소는 이 플랜에만 쓰입니다. 컨트랙트는 이 주소로 누구의 입금인지 판단합니다.",
+    copy:"복사", copied:"복사됨",
+    recTitle:"납부 기록", recEmpty:"아직 증명된 납부가 없습니다.",
+    recLoading:"체인을 읽는 중", recCredited:"반영",
+    recLeftAfter:"이후 {amt} 남음", recSettledRow:"전액 납부",
+    recCapped:"남은 금액만큼만 받았습니다. 나머지는 청구되지 않았습니다.",
+    recCount:"{n}건 증명",
+    toastT:"납부가 증명됐습니다", toastD:"{amt} 도착. {n}일 추가.",
+    toastOwnedT:"전액 납부", toastOwnedD:"이제 이 기계는 구매자의 것입니다.",
+    fContract:"컨트랙트", fChain:"크레딧코인 CC3 테스트넷",
+    fSource:"이더리움 메인넷 입금을 증명", fExplorer:"익스플로러에서 보기",
+    loading:"체인에서 플랜을 불러오는 중",
+    errPlan:"이 플랜을 체인에서 읽지 못했습니다.",
+    plan:"플랜",
+    vTitle:"직접 확인하기",
+    vBody:"이 페이지의 모든 숫자는 컨트랙트에서 바로 읽어옵니다. 중간에 서버가 없습니다.",
+    vContract:"컨트랙트", vPlan:"이 플랜", vProof:"증명 프리컴파일"
+  },
+  ja: {
+    _name:"日本語", _locale:"ja-JP",
+    tagline:"海外の家族が支払い、ここにある機械は動き続けます。",
+    s1t:"家族が USDC を送ります",
+    s1b:"イーサリアム上で、このプラン専用の受取アドレスに送ります。メモも口座番号も仲介する代理人も要りません。",
+    s2t:"Creditcoin が着金を確認します",
+    s2b:"Attestcoin の証明をプリコンパイルがチェーン上で検証します。どの企業も着金を承認せず、否認もできません。",
+    s3t:"支払った分だけ機械が動きます",
+    s3b:"多く送れば長く動きます。価格を満たせば購入者のものになります。",
+    on:"稼働中", off:"停止中", owned:"所有済み",
+    subOn:"{date} まで利用料が入っています。",
+    subOff:"{date} に停止しました。入金が証明され次第すぐ再開します。",
+    subOwned:"全額支払い済みです。二度と停止しません。",
+    heroLeft:"所有までの残額", heroOwned:"残額なし",
+    paidOf:"{total} のうち {paid} 支払い済み", pct:"{n}% 所有",
+    fRate:"レート", fRateV:"{amt} で {n} 日",
+    fRuns:"稼働期限", fRunsForever:"停止しません",
+    fInst:"分割回数", fInstV:"{b} 回中 {a} 回",
+    fPaid:"証明された支払い",
+    lockOn:"追加の入金がなければ <strong>{date}</strong> に停止します。<strong>{amt}</strong> を送ると <strong>{n} 日</strong>延長されます。",
+    lockOff:"現在停止しています。<strong>{amt}</strong> を送ると <strong>{n} 日間</strong>また動きます。",
+    lockOwned:"もう何もこの機械を止められません。",
+    payTitle:"イーサリアムで USDC を送るアドレス",
+    payNote:"このアドレスはこのプラン専用です。コントラクトはこれで誰の支払いかを判別します。",
+    copy:"コピー", copied:"コピーしました",
+    recTitle:"支払い記録", recEmpty:"証明された支払いはまだありません。",
+    recLoading:"チェーンを読み込み中", recCredited:"反映",
+    recLeftAfter:"この後の残り {amt}", recSettledRow:"全額支払い",
+    recCapped:"残額分だけ受け取りました。超過分は請求していません。",
+    recCount:"{n} 件",
+    toastT:"支払いが証明されました", toastD:"{amt} 着金。{n} 日追加。",
+    toastOwnedT:"全額支払い完了", toastOwnedD:"この機械は購入者のものになりました。",
+    fContract:"コントラクト", fChain:"Creditcoin CC3 テストネット",
+    fSource:"イーサリアム メインネットの入金を証明", fExplorer:"エクスプローラで見る",
+    loading:"チェーンからプランを読み込み中",
+    errPlan:"このプランをチェーンから読み取れませんでした。",
+    plan:"プラン",
+    vTitle:"自分で確かめる",
+    vBody:"このページの数字はすべてコントラクトから直接読んでいます。間にサーバーはありません。",
+    vContract:"コントラクト", vPlan:"このプラン", vProof:"証明プリコンパイル"
+  },
+  zh: {
+    _name:"中文", _locale:"zh-CN",
+    tagline:"海外的家人付款，这里的机器持续运转。",
+    s1t:"家人发送 USDC",
+    s1b:"在以太坊上发送到该计划专属的收款地址。不需要备注、账号，也不需要中间代理人。",
+    s2t:"Creditcoin 验证款项确实到账",
+    s2b:"Attestcoin 证明由预编译合约在链上验证。没有公司确认这笔付款，也没有公司能否认它。",
+    s3t:"付多少，机器就运转多久",
+    s3b:"付得越多运转越久。付满全价，机器就完全归购买者所有。",
+    on:"运转中", off:"已停机", owned:"已归属",
+    subOn:"使用期已付至 {date}。",
+    subOff:"已于 {date} 停机。付款一经证明立即恢复。",
+    subOwned:"已付清全款，不会再停机。",
+    heroLeft:"距离拥有还需支付", heroOwned:"无需再付",
+    paidOf:"已付 {paid}，共 {total}", pct:"已拥有 {n}%",
+    fRate:"费率", fRateV:"{amt} 可用 {n} 天",
+    fRuns:"运转至", fRunsForever:"不会停机",
+    fInst:"分期", fInstV:"{b} 期中的 {a} 期",
+    fPaid:"已证明的付款",
+    lockOn:"若没有新的付款，将于 <strong>{date}</strong> 停机。发送 <strong>{amt}</strong> 可延长 <strong>{n} 天</strong>。",
+    lockOff:"目前已停机。发送 <strong>{amt}</strong> 可重新运转 <strong>{n} 天</strong>。",
+    lockOwned:"现在没有任何东西能让它停机。",
+    payTitle:"在以太坊上发送 USDC 至",
+    payNote:"该地址仅属于此计划。合约据此判断这笔付款属于谁。",
+    copy:"复制", copied:"已复制",
+    recTitle:"付款记录", recEmpty:"尚无已证明的付款。",
+    recLoading:"正在读取链上数据", recCredited:"已计入",
+    recLeftAfter:"此后剩余 {amt}", recSettledRow:"已付清",
+    recCapped:"只收取了剩余应付金额，超出部分未收取。",
+    recCount:"已证明 {n} 笔",
+    toastT:"付款已获证明", toastD:"{amt} 已到账，增加 {n} 天。",
+    toastOwnedT:"已付清全款", toastOwnedD:"机器现已归购买者所有。",
+    fContract:"合约", fChain:"Creditcoin CC3 测试网",
+    fSource:"证明来自以太坊主网的付款", fExplorer:"在浏览器中查看",
+    loading:"正在从链上加载计划",
+    errPlan:"无法从链上读取该计划。",
+    plan:"计划",
+    vTitle:"自行核验",
+    vBody:"本页所有数字均直接从合约读取，中间没有任何服务器。",
+    vContract:"合约", vPlan:"该计划", vProof:"证明预编译"
+  }
+};
+
+/* The merchant names the asset off chain, so the name lives here while every
+   number on this page comes from the contract. */
+const NAMES = {
+  "0x5ad26bfe660e57c3d52835d4946ecf0d07d4837ffb40a105da200bcd11103b9c":
+    { en:"Delivery truck", ko:"배달 트럭", ja:"配送トラック", zh:"送货卡车" },
+  "0x79ca67dbdfdec625438afabb4bdc8080cb699c8fcec12f5c3a5c6f5af8f56c0d":
+    { en:"Delivery truck, second", ko:"배달 트럭 2호", ja:"配送トラック 2台目", zh:"第二辆送货卡车" },
+  "0x2e73d5949dee6d8ea8588ec7a4e61731e7619dbc0d52552b27463ca108666ac6":
+    { en:"Motorcycle", ko:"오토바이", ja:"バイク", zh:"摩托车" },
+  "0xf309f0baf639e8646ad141f50907f187ddb800ff851ea86732913b67beeb8d80":
+    { en:"Solar home system", ko:"가정용 태양광", ja:"家庭用ソーラー", zh:"家用太阳能" },
+  "0x8391e786621e3dd344f1b43eb7973499d9967bf68c4f113b10199dfdf9cf6cac":
+    { en:"Cargo tricycle", ko:"삼륜 화물차", ja:"三輪カーゴ", zh:"三轮货车" },
+  "0xfe738d04cba29310772148d0324d0c82e8a82a6517211a91661be0977dbc79c1":
+    { en:"Motorcycle, second hand", ko:"중고 오토바이", ja:"中古バイク", zh:"二手摩托车" }
+};
+
+/* ================================================================= config */
 const RPC = "https://rpc.cc3-testnet.creditcoin.network";
+const EXPLORER = "https://creditcoin-testnet.blockscout.com";
 const CONTRACT = "0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223";
-const EXPLORER = "https://creditcoin-testnet.blockscout.com/address/" + CONTRACT;
+const SEL_PLAN_IDS = "0x42d4533a";  // planIds(uint256)
+const SEL_COUNT    = "0x382d39bb";  // planCount()
 const SEL_GET_PLAN = "0xa0f73826";  // getPlan(bytes32)
-const LEVELS = { ON: "b-on", OFF: "b-off", OWNED: "b-owned" };
-// keccak256 of the contract's two payment events
-const TOPIC_PAID = "0xbd129ffece948cfd7a2321cf2ce8a374880c5f7f41f3d74d447b52e4d77d2f72";
-const TOPIC_SETTLED = "0x36a77e105de32f4c7c450c0ba47fb24bee862b9f7b3316e749fc20aabe105df2";
-const LOOKBACK = 4000;   // blocks of history to show on load
-const POLL_MS = 12000;   // CC3 makes a block roughly every 15s
-let watchedPlan = null;
-let lastBlock = null;
+const SEL_CURRENCY = "0xd6538ecd";  // getPlanCurrency(bytes32)
+const TOPIC_PAID   = "0xbd129ffece948cfd7a2321cf2ce8a374880c5f7f41f3d74d447b52e4d77d2f72";
+const DECIMALS = 6, SYMBOL = "USDC";
+/* The node caps eth_getLogs at a ten second query, so history comes from the
+   indexer and only the live tail is polled from the node. */
+const TAIL_BLOCKS = 1200, POLL_MS = 12000, MAX_SCAN = 20000;
+
+/* ================================================================== state */
+let lang = pickLang();
+let plans = [];            // [{id, price, paid, activeUntil, settled, collector, installment, days}]
+let current = null;
+let events = [];           // ascending
 let seen = new Set();
+let lastBlock = null;
+let poller = null, ticker = null, polling = false;
+let reqToken = 0;          // guards against out of order plan switches
 
-document.getElementById("clink").textContent = CONTRACT;
-document.getElementById("clink").href = EXPLORER;
-
-async function ethCall(data) {
-  const r = await fetch(RPC, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call",
-      params: [{ to: CONTRACT, data }, "latest"] }),
-  });
-  const j = await r.json();
-  if (j.error) throw new Error(j.error.message || "eth_call failed");
-  return j.result;
+function pickLang() {
+  const saved = localStorage.getItem("rto-lang");
+  if (saved && I18N[saved]) return saved;
+  const n = (navigator.language || "en").toLowerCase();
+  if (n.startsWith("ko")) return "ko";
+  if (n.startsWith("ja")) return "ja";
+  if (n.startsWith("zh")) return "zh";
+  return "en";
 }
-
-function word(hex, i) { return hex.slice(i * 64, i * 64 + 64); }
-function toNum(h) { return BigInt("0x" + h); }
-function toAddr(h) { return "0x" + h.slice(24); }
-function usdc(v) { return (Number(v) / 1e6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-
-async function check() {
-  const out = document.getElementById("out");
-  const id = document.getElementById("plan").value.trim();
-  if (!/^0x[0-9a-fA-F]{64}$/.test(id)) {
-    out.innerHTML = '<div class="card err">Enter a 32-byte plan id (0x + 64 hex characters).</div>';
-    return;
-  }
-  out.innerHTML = '<div class="card">Reading the chain…</div>';
-  try {
-    // getPlan(bytes32) -> (buyer, merchant, collector, priceTotal, paid, activeUntil, active, settled)
-    const res = await ethCall(SEL_GET_PLAN + id.slice(2));
-    const h = res.replace(/^0x/, "");
-    if (h.length < 64 * 8) throw new Error("no such plan");
-    const collector = toAddr(word(h, 2));
-    const price = toNum(word(h, 3));
-    const paid = toNum(word(h, 4));
-    const activeUntil = Number(toNum(word(h, 5)));
-    const active = toNum(word(h, 6)) === 1n;
-    const settled = toNum(word(h, 7)) === 1n;
-    if (price === 0n) throw new Error("no such plan");
-
-    const state = settled ? "OWNED" : (active ? "ON" : "OFF");
-    const pct = Number((paid * 10000n) / price) / 100;
-    const now = Math.floor(Date.now() / 1000);
-    const daysLeft = active && !settled ? Math.floor((activeUntil - now) / 86400) : null;
-    const until = settled ? "yours, permanently"
-      : (active ? new Date(activeUntil * 1000).toISOString().slice(0, 10) : "switched off");
-
-    if (watchedPlan !== id) watchPlan(id);
-
-    out.innerHTML = `
-      <div class="card">
-        <div class="head">
-          <div style="font-size:19px;font-weight:700">Device ${state === "OWNED" ? "owned outright" : (state === "ON" ? "running" : "switched off")}</div>
-          <span class="badge ${LEVELS[state]}">${state}</span>
-        </div>
-        <div class="bar"><div class="fill" style="width:${Math.min(pct, 100)}%"></div></div>
-        <div style="font-size:14px;color:var(--dim)">${usdc(paid)} of ${usdc(price)} USDC paid (${pct.toFixed(1)}%)</div>
-        <div class="kv">
-          <div>Still owed</div><div>${usdc(price - paid)} USDC</div>
-          <div>Runs until</div><div>${until}${daysLeft !== null ? ` (${daysLeft} days left)` : ""}</div>
-          <div>Pay to (Ethereum)</div><div class="mono">${collector}</div>
-          <div>Plan</div><div class="mono">${id}</div>
-        </div>
-        ${settled ? '<p class="muted">The full price is covered. This device never switches off again.</p>' : ''}
-      </div>`;
-  } catch (e) {
-    out.innerHTML = '<div class="card err">' + e.message + '</div>';
-  }
+const T = k => I18N[lang][k];
+function t(k, vars) {
+  let s = I18N[lang][k] || k;
+  if (vars) for (const key in vars) s = s.split("{" + key + "}").join(vars[key]);
+  return s;
 }
+const esc = s => String(s).replace(/[&<>"]/g, c =>
+  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 
-// --- live payment alerts -------------------------------------------------
-// The point of the product is that a payment arriving abroad is visible here
-// within a block. This watches the contract's own events and says so.
-
+/* ================================================================ helpers */
 async function rpc(method, params) {
   const r = await fetch(RPC, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ jsonrpc:"2.0", id:1, method, params })
   });
   const j = await r.json();
-  if (j.error) throw new Error(j.error.message || method + " failed");
+  if (j.error) throw new Error(j.error.message);
   return j.result;
 }
+async function rpcBatch(calls) {
+  const r = await fetch(RPC, {
+    method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(calls.map((c, i) =>
+      ({ jsonrpc:"2.0", id:i, method:c[0], params:c[1] })))
+  });
+  const j = await r.json();
+  if (!Array.isArray(j)) throw new Error("batch failed");
+  return j.sort((a, b) => a.id - b.id).map(x => x.result);
+}
+const w = (h, i) => h.slice(i * 64, i * 64 + 64);
+const bn = h => BigInt("0x" + h);
+const ad = h => "0x" + h.slice(24);
+const hexnum = h => parseInt(h, 16);
 
-function toast(title, detail, owned) {
-  const el = document.createElement("div");
-  el.className = "toast" + (owned ? " owned" : "");
-  el.innerHTML = `<div class="t">${title}</div><div class="d">${detail}</div>`;
-  document.getElementById("alerts").appendChild(el);
-  setTimeout(() => { el.style.transition = "opacity .5s"; el.style.opacity = "0";
-    setTimeout(() => el.remove(), 500); }, 20000);  // long enough to read, and to catch on camera
+function money(v, opt) {
+  const n = Number(v) / 10 ** DECIMALS;
+  const frac = (opt && opt.whole && Number.isInteger(n)) ? 0 : 2;
+  return n.toLocaleString(I18N[lang]._locale,
+    { minimumFractionDigits: frac, maximumFractionDigits: frac });
+}
+const amt = (v, opt) => money(v, opt) + " " + SYMBOL;
+const dateOf = ts => new Date(ts * 1000).toLocaleDateString(I18N[lang]._locale,
+  { year:"numeric", month:"short", day:"numeric" });
+const stampOf = ts => new Date(ts * 1000).toLocaleString(I18N[lang]._locale,
+  { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
+const shortAddr = a => a.slice(0, 6) + "…" + a.slice(-4);
+const MAXU64 = 18446744073709551615n;
+
+/* ============================================================ chrome, i18n */
+function paintChrome() {
+  document.documentElement.lang = lang;
+  document.getElementById("tagline").textContent = T("tagline");
+
+  document.getElementById("langs").innerHTML = Object.keys(I18N).map(k =>
+    '<button type="button" data-l="' + k + '" aria-pressed="' + (k === lang) +
+    '" lang="' + k + '">' + esc(I18N[k]._name) + "</button>").join("");
+  document.querySelectorAll("#langs button").forEach(b =>
+    b.addEventListener("click", () => setLang(b.dataset.l)));
+
+  document.getElementById("how").innerHTML = [1, 2, 3].map(i =>
+    '<div class="step"><span class="n">' + i + '</span><h3>' +
+    esc(T("s" + i + "t")) + "</h3><p>" + esc(T("s" + i + "b")) + "</p></div>").join("");
+
+  document.getElementById("rec-title").textContent = T("recTitle");
+  document.getElementById("footer").innerHTML =
+    '<span class="f"><span class="label">' + esc(T("fContract")) +
+      '</span> <a class="mono" href="' + EXPLORER + "/address/" + CONTRACT +
+      '" target="_blank" rel="noopener">' + shortAddr(CONTRACT) + "</a></span>" +
+    '<span class="f">' + esc(T("fChain")) + "</span>" +
+    '<span class="f">' + esc(T("fSource")) + "</span>";
+}
+function setLang(l) {
+  if (!I18N[l] || l === lang) return;
+  lang = l;
+  localStorage.setItem("rto-lang", l);
+  paintChrome();
+  renderPicker();
+  renderStatement();
+  renderRecord();
+  renderVerify();
 }
 
-function decodePayment(log) {
-  // PaymentProven(bytes32 indexed planId, address indexed payer,
-  //               uint128 amount, uint128 paidTotal, uint64 activeUntil)
-  const d = log.data.replace(/^0x/, "");
+/* =========================================================== plan loading */
+async function loadPlans() {
+  const n = Number(bn((await rpc("eth_call",
+    [{ to:CONTRACT, data:SEL_COUNT }, "latest"])).slice(2)));
+  if (!n) return [];
+  const ids = (await rpcBatch(Array.from({ length:n }, (_, i) =>
+    ["eth_call", [{ to:CONTRACT,
+      data: SEL_PLAN_IDS + i.toString(16).padStart(64, "0") }, "latest"]])));
+  const res = await rpcBatch(ids.flatMap(id => [
+    ["eth_call", [{ to:CONTRACT, data:SEL_GET_PLAN + id.slice(2) }, "latest"]],
+    ["eth_call", [{ to:CONTRACT, data:SEL_CURRENCY + id.slice(2) }, "latest"]]
+  ]));
+  return ids.map((id, k) => {
+    const a = res[2 * k].slice(2), b = res[2 * k + 1].slice(2);
+    return {
+      id,
+      collector: ad(w(a, 2)),
+      price: bn(w(a, 3)),
+      paid: bn(w(a, 4)),
+      activeUntil: bn(w(a, 5)),
+      settled: bn(w(a, 7)) === 1n,
+      installment: bn(w(b, 2)),
+      days: Number(bn(w(b, 3)))
+    };
+  }).reverse();   // newest opened first
+}
+function stateOf(p) {
+  if (p.settled) return "owned";
+  return p.activeUntil > BigInt(Math.floor(Date.now() / 1000)) ? "on" : "off";
+}
+function nameOf(p) {
+  const n = NAMES[p.id];
+  return n ? (n[lang] || n.en) : T("plan") + " " + p.id.slice(2, 8);
+}
+
+/* ================================================================= picker */
+function renderPicker() {
+  document.getElementById("picker").innerHTML = plans.map(p =>
+    '<button type="button" class="chip" data-id="' + p.id + '" data-s="' +
+    stateOf(p) + '" aria-pressed="' + (current && p.id === current.id) +
+    '"><span class="tick"></span>' + esc(nameOf(p)) + "</button>").join("");
+  document.querySelectorAll("#picker .chip").forEach(el =>
+    el.addEventListener("click", () => select(el.dataset.id)));
+}
+
+/* ============================================================== statement */
+function renderStatement() {
+  const el = document.getElementById("stmt");
+  if (!current) { el.innerHTML = '<div class="skel">' + esc(T("loading")) + "</div>"; return; }
+  const p = current, st = stateOf(p);
+  const owned = st === "owned";
+  const left = p.price > p.paid ? p.price - p.paid : 0n;
+  const pct = p.price > 0n ? Number((p.paid * 10000n) / p.price) / 100 : 0;
+  const until = Number(p.activeUntil);
+  const forever = p.activeUntil === MAXU64 || owned;
+  const instDone = p.installment > 0n ? Number((p.paid * 100n) / p.installment) / 100 : 0;
+  const instAll = p.installment > 0n ? Number((p.price * 100n) / p.installment) / 100 : 0;
+
+  const sub = owned ? T("subOwned")
+    : st === "on" ? t("subOn", { date: dateOf(until) })
+    : t("subOff", { date: dateOf(until) });
+
+  const lock = owned ? T("lockOwned")
+    : st === "on"
+      ? t("lockOn", { date: dateOf(until), amt: amt(p.installment, { whole:true }), n: p.days })
+      : t("lockOff", { amt: amt(p.installment, { whole:true }), n: p.days });
+
+  el.setAttribute("data-owned", owned ? "1" : "0");
+  el.innerHTML =
+    '<div class="stmt-top">' +
+      '<div class="asset">' +
+        '<span class="name">' + esc(nameOf(current)) + "</span>" +
+        '<span class="pill" data-s="' + st + '"><span class="led"></span>' +
+        esc(T(st)) + "</span></div>" +
+      '<p class="substate">' + esc(sub) + "</p>" +
+    "</div>" +
+
+    '<div class="hero">' +
+      '<span class="label">' + esc(owned ? T("heroOwned") : T("heroLeft")) + "</span>" +
+      '<span class="figure"><span class="amount">' + money(left) +
+        '</span><span class="cur">' + SYMBOL + "</span></span>" +
+      track(instDone, instAll, pct) +
+      '<span class="under"><span>' +
+        esc(t("paidOf", { paid: money(p.paid), total: amt(p.price, { whole:true }) })) +
+        '</span><span class="sep"></span><span>' +
+        esc(t("pct", { n: pct.toFixed(1) })) + "</span></span>" +
+    "</div>" +
+
+    '<div class="facts">' +
+      fact(T("fRate"), esc(t("fRateV",
+        { amt: amt(p.installment, { whole:true }), n: p.days }))) +
+      fact(T("fRuns"), forever
+        ? "<small>" + esc(T("fRunsForever")) + "</small>"
+        : esc(dateOf(until))) +
+      fact(T("fInst"), esc(t("fInstV",
+        { a: instDone.toFixed(1).replace(/\.0$/, ""), b: Math.round(instAll) }))) +
+      fact(T("fPaid"), String(events.length)) +
+    "</div>" +
+
+    '<div class="lock"><svg class="mark" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+      '<circle cx="10" cy="10" r="8.25" stroke="currentColor" stroke-width="1.4"/>' +
+      '<path d="M10 6v4.6l3 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      "</svg><span>" + lock + "</span></div>" +
+
+    (owned ? "" :
+      '<div class="payto">' +
+        '<span class="label">' + esc(T("payTitle")) + "</span>" +
+        '<div class="addr-row"><span class="addr">' + esc(p.collector) + "</span>" +
+        '<button type="button" class="btn" id="copy">' + esc(T("copy")) + "</button></div>" +
+        '<span class="note">' + esc(T("payNote")) + "</span>" +
+      "</div>");
+
+  const c = document.getElementById("copy");
+  if (c) c.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(p.collector); } catch (e) { /* denied */ }
+    c.textContent = T("copied");
+    setTimeout(() => { c.textContent = T("copy"); }, 1600);
+  });
+}
+const fact = (k, v) =>
+  '<div class="fact"><span class="label">' + esc(k) + '</span><span class="v">' + v + "</span></div>";
+
+/* The claim this project makes is that nobody stands between the payment and
+   the machine, so the page says exactly where to go and check that. */
+const PRECOMPILE = "0x0000000000000000000000000000000000000FD2";
+function renderVerify() {
+  const link = (href, text) => '<a href="' + href +
+    '" target="_blank" rel="noopener">' + esc(text) + "</a>";
+  document.getElementById("verify").innerHTML =
+    '<span class="label">' + esc(T("vTitle")) + "</span>" +
+    "<p>" + esc(T("vBody")) + "</p>" +
+    "<dl>" +
+      "<dt>" + esc(T("vContract")) + "</dt><dd>" +
+        link(EXPLORER + "/address/" + CONTRACT, shortAddr(CONTRACT)) + "</dd>" +
+      (current ? "<dt>" + esc(T("vPlan")) + "</dt><dd>" +
+        link(EXPLORER + "/address/" + CONTRACT + "?tab=logs",
+             current.id.slice(0, 6) + "…" + current.id.slice(-4)) + "</dd>" : "") +
+      "<dt>" + esc(T("vProof")) + "</dt><dd>0x…0FD2</dd>" +
+    "</dl>";
+}
+
+/* One block per instalment while that stays countable, so the reader can see
+   how many are left instead of decoding a percentage. */
+function track(done, total, pct) {
+  const n = Math.round(total);
+  const aria = t("fInstV", { a: done.toFixed(1).replace(/\.0$/, ""), b: n });
+  if (!(n >= 2 && n <= 60)) {
+    return '<div class="track plain" role="img" aria-label="' + esc(aria) +
+      '"><div class="fill" style="width:' +
+      Math.max(0, Math.min(100, pct)) + '%"></div></div>';
+  }
+  let out = '<div class="track" role="img" aria-label="' + esc(aria) + '">';
+  for (let i = 0; i < n; i++) {
+    const f = Math.max(0, Math.min(1, done - i));
+    out += '<span class="seg" style="--f:' + (f * 100).toFixed(1) + '%"></span>';
+  }
+  return out + "</div>";
+}
+
+/* ================================================================= record */
+function renderRecord(freshKey) {
+  const body = document.getElementById("rec-body");
+  const count = document.getElementById("rec-count");
+  count.textContent = events.length ? t("recCount", { n: events.length }) : "";
+  if (!events.length) {
+    body.innerHTML = '<div class="rec-empty">' + esc(T("recEmpty")) + "</div>";
+    return;
+  }
+  const price = current ? current.price : 0n;
+  const rows = events.slice().reverse().map(e => {
+    const leftAfter = price > e.paidTotal ? price - e.paidTotal : 0n;
+    const capped = e.amount > e.credited;
+    return '<li class="' + (e.key === freshKey ? "fresh" : "") + '">' +
+      '<div class="rec-row"><span class="rec-amt"><span class="plus">+</span>' +
+        money(e.credited) + " " + SYMBOL + "</span>" +
+        '<span class="rec-when">' + esc(e.time ? stampOf(e.time) : "#" + e.block) + "</span></div>" +
+      '<div class="rec-meta"><span>' +
+        esc(leftAfter > 0n ? t("recLeftAfter", { amt: amt(leftAfter) }) : T("recSettledRow")) +
+        '</span><a class="who" href="' + EXPLORER + "/tx/" + e.tx +
+        '" target="_blank" rel="noopener">' + shortAddr(e.payer) + "</a></div>" +
+      (capped ? '<div class="rec-note">' + esc(T("recCapped")) + "</div>" : "") +
+      "</li>";
+  }).join("");
+  body.innerHTML = '<ul class="rec-list">' + rows + "</ul>";
+}
+
+/* ============================================================ log reading */
+function decodeLog(lg) {
+  const d = lg.data.replace(/^0x/, "");
   return {
-    plan: log.topics[1],
-    payer: "0x" + log.topics[2].slice(26),
-    amount: BigInt("0x" + d.slice(0, 64)),
-    paidTotal: BigInt("0x" + d.slice(64, 128)),
-    activeUntil: Number(BigInt("0x" + d.slice(128, 192))),
-    block: parseInt(log.blockNumber, 16),
-    tx: log.transactionHash,
+    key: lg.transactionHash + ":" + lg.logIndex,
+    tx: lg.transactionHash,
+    payer: ad(lg.topics[2].slice(2)),
+    amount: bn(w(d, 0)),
+    paidTotal: bn(w(d, 1)),
+    activeUntil: bn(w(d, 2)),
+    block: typeof lg.blockNumber === "string" ? hexnum(lg.blockNumber) : lg.blockNumber,
+    time: lg.timeStamp ? hexnum(lg.timeStamp) : null,
+    credited: 0n
   };
 }
-
-function renderFeed(events) {
-  const feed = document.getElementById("feed");
-  if (!events.length) { feed.innerHTML = ""; return; }
-  const rows = events.slice(-6).reverse().map(e => {
-    const until = new Date(e.activeUntil * 1000);
-    const when = e.activeUntil > 2e10 ? "paid off" : "runs to " + until.toISOString().slice(0, 10);
-    return `<div class="ev"><div><span class="amt">${usdc(e.amount)} USDC</span>
-      <div class="meta">from ${e.payer.slice(0, 10)}… · block ${e.block}</div></div>
-      <div class="meta">${when}</div></div>`;
-  }).join("");
-  feed.innerHTML = `<h4>Proven payments</h4>${rows}`;
+/* The credited figure is the change in paidTotal, not the raw transfer: the
+   contract takes only what is still owed and leaves the rest. */
+function fillCredited() {
+  let prev = 0n;
+  for (const e of events) { e.credited = e.paidTotal - prev; prev = e.paidTotal; }
 }
 
-let feedEvents = [];
+async function historyFromIndexer(planId) {
+  const u = EXPLORER + "/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest" +
+    "&address=" + CONTRACT + "&topic0=" + TOPIC_PAID + "&topic1=" + planId +
+    "&topic0_1_opr=and";
+  const r = await fetch(u);
+  const j = await r.json();
+  if (!j || !Array.isArray(j.result)) return [];
+  return j.result.map(decodeLog).sort((a, b) => a.block - b.block || 0);
+}
+async function tailFromNode(planId, from, to) {
+  return (await rpc("eth_getLogs", [{
+    address: CONTRACT, fromBlock: "0x" + from.toString(16),
+    toBlock: "0x" + to.toString(16), topics: [[TOPIC_PAID], planId]
+  }])).map(decodeLog);
+}
 
-async function pollAlerts(firstRun) {
-  if (!watchedPlan) return;
+/* ================================================================ polling */
+async function poll() {
+  /* a slow scan must not let the next tick pile another one on top of it */
+  if (!current || polling) return;
+  polling = true;
+  const planId = current.id;
   try {
-    const head = parseInt(await rpc("eth_blockNumber", []), 16);
-    const from = firstRun ? Math.max(0, head - LOOKBACK) : (lastBlock === null ? head : lastBlock + 1);
+    const head = hexnum(await rpc("eth_blockNumber", []));
+    const from = lastBlock === null ? Math.max(0, head - TAIL_BLOCKS) : lastBlock + 1;
     if (from > head) return;
+    /* never ask for more than the node will answer inside its query timeout;
+       a long gap is closed over several polls instead of failing outright */
+    const to = Math.min(head, from + MAX_SCAN - 1);
+    const fresh = (await tailFromNode(planId, from, to)).filter(e => !seen.has(e.key));
+    lastBlock = to;
+    if (!fresh.length || planId !== current.id) return;
 
-    const logs = await rpc("eth_getLogs", [{
-      address: CONTRACT, fromBlock: "0x" + from.toString(16), toBlock: "0x" + head.toString(16),
-      topics: [[TOPIC_PAID, TOPIC_SETTLED], watchedPlan],
-    }]);
-    lastBlock = head;
+    fresh.forEach(e => seen.add(e.key));
+    events = events.concat(fresh).sort((a, b) => a.block - b.block);
+    fillCredited();
 
-    for (const log of logs) {
-      const id = log.transactionHash + ":" + log.logIndex;
-      if (seen.has(id)) continue;
-      seen.add(id);
+    const last = fresh[fresh.length - 1];
+    Object.assign(current, {
+      paid: last.paidTotal,
+      activeUntil: last.activeUntil,
+      settled: last.paidTotal >= current.price
+    });
+    renderStatement();
+    renderRecord(last.key);
+    renderPicker();
 
-      if (log.topics[0].toLowerCase() === TOPIC_PAID) {
-        const e = decodePayment(log);
-        feedEvents.push(e);
-        if (!firstRun) {
-          toast("Payment proven", `${usdc(e.amount)} USDC arrived from Ethereum. The device keeps running.`);
-          check();
-        }
-      } else if (!firstRun) {
-        toast("Paid off", "The full price is covered. The device belongs to its owner now.", true);
-        check();
-      }
-    }
-    renderFeed(feedEvents);
-    document.getElementById("watchtext").textContent =
-      `watching Creditcoin for proven payments · block ${head}`;
+    const days = Math.max(1, Math.round(
+      Number(last.credited) * current.days / Number(current.installment)));
+    if (current.settled) toast(T("toastOwnedT"), T("toastOwnedD"));
+    else toast(T("toastT"), t("toastD", { amt: amt(last.credited), n: days }));
+  } catch (e) { /* a public node hiccup is not worth a visible error */ }
+  finally { polling = false; }
+}
+
+function toast(title, detail) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = '<div class="t"><span class="led"></span>' + esc(title) +
+    '</div><div class="d">' + esc(detail) + "</div>";
+  document.getElementById("toasts").appendChild(el);
+  setTimeout(() => el.remove(), 20000);
+}
+
+/* ================================================================= select */
+async function select(id) {
+  const p = plans.find(x => x.id === id);
+  if (!p) return;
+  const token = ++reqToken;
+  current = p;
+  if (location.hash.replace("#", "") !== id) history.replaceState(null, "", "#" + id);
+  events = []; seen = new Set(); lastBlock = null;
+  renderPicker();
+  renderStatement();
+  renderVerify();
+  document.getElementById("rec-body").innerHTML =
+    '<div class="skel">' + esc(T("recLoading")) + "…</div>";
+  document.getElementById("rec-count").textContent = "";
+
+  let hist = [];
+  try { hist = await historyFromIndexer(id); }
+  catch (e) { hist = []; }
+  if (token !== reqToken) return;
+
+  events = hist;
+  events.forEach(e => seen.add(e.key));
+  fillCredited();
+  if (events.length) lastBlock = events[events.length - 1].block;
+  renderStatement();
+  renderRecord();
+
+  clearInterval(poller);
+  polling = false;
+  poller = setInterval(poll, POLL_MS);
+  poll();
+}
+
+/* =================================================================== boot */
+(async function boot() {
+  /* the page follows the reader's theme, but a recording may want one pinned */
+  const forced = new URLSearchParams(location.search).get("theme");
+  if (forced === "light" || forced === "dark")
+    document.documentElement.setAttribute("data-theme", forced);
+  paintChrome();
+  renderVerify();
+  try {
+    plans = await loadPlans();
   } catch (e) {
-    document.getElementById("watchtext").textContent = "watch paused: " + e.message;
+    document.getElementById("stmt").innerHTML =
+      '<div class="err">' + esc(T("errPlan")) + "</div>";
+    return;
   }
-}
-
-function watchPlan(planId) {
-  watchedPlan = planId;
-  lastBlock = null;
-  seen = new Set();
-  feedEvents = [];
-  document.getElementById("feed").innerHTML = "";
-  pollAlerts(true);
-}
-
-setInterval(() => pollAlerts(false), POLL_MS);
-
-document.getElementById("go").addEventListener("click", check);
-document.getElementById("plan").addEventListener("keydown", e => { if (e.key === "Enter") check(); });
-document.querySelectorAll(".pill").forEach(el => el.addEventListener("click", () => {
-  document.getElementById("plan").value = el.dataset.p; check();
-}));
-
-document.getElementById("plan").value = document.querySelector(".pill").dataset.p;
-check();
+  renderPicker();
+  const want = location.hash.replace("#", "");
+  await select(plans.find(p => p.id === want) ? want : plans[0].id);
+  /* the countdown wording changes as time passes even with no new payment */
+  window.addEventListener("hashchange", () => {
+    const id = location.hash.replace("#", "");
+    if (plans.some(p => p.id === id) && (!current || current.id !== id)) select(id);
+  });
+  /* the countdown wording changes as time passes even with no new payment */
+  ticker = setInterval(() => { if (current) renderStatement(); }, 60000);
+})();
 </script>
 </body>
 </html>
