@@ -378,7 +378,7 @@ const I18N = {
     lockOwned:"Nothing can switch it off now.",
     payTitle:"Send USDC on Ethereum to",
     payNote:"This address belongs to this plan alone. That is how the contract knows whose payment it is.",
-    copy:"Copy", copied:"Copied",
+    copy:"Copy", copied:"Copied", copyManual:"Press Ctrl+C",
     recTitle:"Payment record", recEmpty:"No payment has been proven yet.",
     recFailed:"The payment record could not be read just now. Nothing has been lost; try again in a moment.",
     recPartial:"Recent payments only. The full record could not be read just now.",
@@ -426,7 +426,7 @@ const I18N = {
     lockOwned:"이제 무엇도 이 기계를 멈출 수 없습니다.",
     payTitle:"이더리움에서 USDC를 보낼 주소",
     payNote:"이 주소는 이 플랜에만 쓰입니다. 컨트랙트는 이 주소로 누구의 입금인지 판단합니다.",
-    copy:"복사", copied:"복사됨",
+    copy:"복사", copied:"복사됨", copyManual:"Ctrl+C 누르기",
     recTitle:"납부 기록", recEmpty:"아직 증명된 납부가 없습니다.",
     recFailed:"지금은 납부 기록을 읽지 못했습니다. 기록이 사라진 것은 아니니 잠시 후 다시 시도해 주세요.",
     recPartial:"최근 납부만 표시하고 있습니다. 전체 기록은 지금 읽지 못했습니다.",
@@ -474,7 +474,7 @@ const I18N = {
     lockOwned:"もう何もこの機械を止められません。",
     payTitle:"イーサリアムで USDC を送るアドレス",
     payNote:"このアドレスはこのプラン専用です。コントラクトはこれで誰の支払いかを判別します。",
-    copy:"コピー", copied:"コピーしました",
+    copy:"コピー", copied:"コピーしました", copyManual:"Ctrl+C を押す",
     recTitle:"支払い記録", recEmpty:"証明された支払いはまだありません。",
     recFailed:"ただ今、支払い記録を読み込めませんでした。記録が消えたわけではありません。しばらくしてからお試しください。",
     recPartial:"直近の支払いのみ表示しています。全記録は今読み込めませんでした。",
@@ -522,7 +522,7 @@ const I18N = {
     lockOwned:"现在没有任何东西能让它停机。",
     payTitle:"在以太坊上发送 USDC 至",
     payNote:"该地址仅属于此计划。合约据此判断这笔付款属于谁。",
-    copy:"复制", copied:"已复制",
+    copy:"复制", copied:"已复制", copyManual:"请按 Ctrl+C",
     recTitle:"付款记录", recEmpty:"尚无已证明的付款。",
     recFailed:"暂时无法读取付款记录。记录并未丢失，请稍后重试。",
     recPartial:"仅显示最近的付款。完整记录暂时无法读取。",
@@ -587,6 +587,7 @@ let seen = new Set();
 let lastBlock = null;
 let poller = null, ticker = null, polling = false;
 let recordState = "ok";   // ok | partial | failed
+let lastPaintedState = null;
 let reqToken = 0;          // guards against out of order plan switches
 
 function pickLang() {
@@ -662,6 +663,23 @@ const DATE_MIN = 1600000000n;
 const DATE_MAX = 253402300799n;
 
 /* ============================================================ chrome, i18n */
+/* Every group here is rebuilt wholesale rather than patched, which drops a
+   keyboard user back to the top of the page. Put them back where they were. */
+function focusKey(el) {
+  if (!el || el === document.body) return null;
+  if (el.id) return "#" + el.id;
+  if (el.dataset && el.dataset.l) return '#langs [data-l="' + el.dataset.l + '"]';
+  if (el.dataset && el.dataset.id) return '#picker [data-id="' + el.dataset.id + '"]';
+  return null;
+}
+function keepFocus(run) {
+  const key = focusKey(document.activeElement);
+  run();
+  if (!key) return;
+  const again = document.querySelector(key);
+  if (again && again !== document.activeElement) again.focus();
+}
+
 function paintChrome() {
   document.documentElement.lang = lang;
   document.getElementById("tagline").textContent = T("tagline");
@@ -688,7 +706,7 @@ function setLang(l) {
   if (!I18N[l] || l === lang) return;
   lang = l;
   try { localStorage.setItem("rto-lang", l); } catch (e) { /* blocked */ }
-  paintChrome();
+  keepFocus(paintChrome);
   renderPicker();
   renderStatement();
   renderRecord();
@@ -732,6 +750,9 @@ function nameOf(p) {
 
 /* ================================================================= picker */
 function renderPicker() {
+  keepFocus(paintPicker);
+}
+function paintPicker() {
   document.getElementById("picker").innerHTML = plans.map(p =>
     '<button type="button" class="chip" data-id="' + p.id + '" data-s="' +
     stateOf(p) + '" aria-pressed="' + (current && p.id === current.id) +
@@ -741,7 +762,8 @@ function renderPicker() {
 }
 
 /* ============================================================== statement */
-function renderStatement() {
+function renderStatement() { keepFocus(paintStatement); }
+function paintStatement() {
   const el = document.getElementById("stmt");
   if (!current) { el.innerHTML = '<div class="skel">' + esc(T("loading")) + "</div>"; return; }
   const p = current, st = stateOf(p);
@@ -774,6 +796,7 @@ function renderStatement() {
       ? t("lockOn", { date: dateOf(until), amt: inst1, n: p.days })
       : t("lockOff", { amt: inst1, n: p.days });
 
+  lastPaintedState = st;
   el.setAttribute("data-owned", owned ? "1" : "0");
   el.innerHTML =
     '<div class="stmt-top">' +
@@ -823,11 +846,25 @@ function renderStatement() {
 
   const c = document.getElementById("copy");
   if (c) c.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(p.collector); } catch (e) { /* denied */ }
-    c.textContent = T("copied");
-    setTimeout(() => { c.textContent = T("copy"); }, 1600);
+    /* Claiming a copy that did not happen invites pasting the wrong address,
+       so a refused clipboard selects the text and says what to press. */
+    let ok = false;
+    try { await navigator.clipboard.writeText(p.collector); ok = true; }
+    catch (e) { ok = false; }
+    if (!ok) selectText(document.querySelector(".payto .addr"));
+    c.textContent = ok ? T("copied") : T("copyManual");
+    setTimeout(() => { c.textContent = T("copy"); }, ok ? 1600 : 4000);
   });
 }
+function selectText(el) {
+  if (!el) return;
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(r);
+}
+
 const fact = (k, v) =>
   '<div class="fact"><span class="label">' + esc(k) + '</span><span class="v">' + v + "</span></div>";
 
@@ -1097,8 +1134,12 @@ async function select(id) {
     const id = location.hash.replace("#", "");
     if (plans.some(p => p.id === id) && (!current || current.id !== id)) select(id);
   });
-  /* the countdown wording changes as time passes even with no new payment */
-  ticker = setInterval(() => { if (current) renderStatement(); }, 60000);
+  /* Nothing on the card changes with the clock except the moment the machine
+     crosses from running to switched off, so redraw only then. Repainting on a
+     timer would also throw a keyboard user off the card once a minute. */
+  ticker = setInterval(() => {
+    if (current && stateOf(current) !== lastPaintedState) renderStatement();
+  }, 20000);
 })();
 </script>
 </body>
