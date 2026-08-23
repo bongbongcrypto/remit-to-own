@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Remit-to-Own</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23101725%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%2213%22%20width%3D%225%22%20height%3D%227%22%20rx%3D%221.6%22%20fill%3D%22%234f7dff%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2213%22%20width%3D%225%22%20height%3D%227%22%20rx%3D%221.6%22%20fill%3D%22%232b3648%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2213%22%20width%3D%225%22%20height%3D%227%22%20rx%3D%221.6%22%20fill%3D%22%232b3648%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2213%22%20width%3D%221%22%20height%3D%227%22%20rx%3D%220.5%22%20fill%3D%22%232b3648%22%2F%3E%3C%2Fsvg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Sans+JP:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap" />
@@ -15,9 +16,10 @@
   --rule:#dfe5ee; --rule2:#eaeff5;
   --accent:#1b45d6; --accent-soft:#e8edfd;
   --on:#0a7355; --on-soft:#e2f2ec;
-  --off:#a2620a; --off-soft:#faeedb;
+  --off:#8f5608; --off-soft:#faeedb;
   --own-bg:#101725; --own-fg:#f5f7fa; --own-dim:#9aa6bc;
   --own-sunk:#1b2432; --own-rule:#2b3648; --own-fill:#5eead4;
+  --toast-bg:#101725; --toast-fg:#f5f7fa; --toast-dim:#a9b4c8; --toast-led:#22e08d;
   --shadow:0 1px 2px rgba(16,23,37,.05), 0 8px 24px -12px rgba(16,23,37,.14);
   --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-cond:"IBM Plex Sans Condensed", var(--font-body);
@@ -28,6 +30,8 @@ html[lang="ko"] { --font-body:"IBM Plex Sans","IBM Plex Sans KR","Malgun Gothic"
 html[lang="ja"] { --font-body:"IBM Plex Sans","IBM Plex Sans JP","Yu Gothic",system-ui,sans-serif; --lh:1.72; }
 html[lang="zh"] { --font-body:"IBM Plex Sans","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif; --lh:1.72; }
 html[lang="ko"], html[lang="ja"], html[lang="zh"] { --font-cond:var(--font-body); }
+/* Korean wraps at word boundaries; without this "30일" splits after the digits */
+html[lang="ko"] body { word-break:keep-all; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -39,6 +43,7 @@ html[lang="ko"], html[lang="ja"], html[lang="zh"] { --font-cond:var(--font-body)
     --off:#e0a44a; --off-soft:#2b2213;
     --own-bg:#f2f5fa; --own-fg:#101725; --own-dim:#56617a;
     --own-sunk:#ffffff; --own-rule:#d8e0ec; --own-fill:#0a7355;
+    --toast-bg:#1e2836; --toast-fg:#e9edf4; --toast-dim:#aab5c8; --toast-led:#3ec495;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
   }
 }
@@ -51,6 +56,7 @@ html[lang="ko"], html[lang="ja"], html[lang="zh"] { --font-cond:var(--font-body)
   --off:#e0a44a; --off-soft:#2b2213;
   --own-bg:#f2f5fa; --own-fg:#101725; --own-dim:#56617a;
   --own-sunk:#ffffff; --own-rule:#d8e0ec; --own-fill:#0a7355;
+  --toast-bg:#1e2836; --toast-fg:#e9edf4; --toast-dim:#aab5c8; --toast-led:#3ec495;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
 }
 
@@ -104,7 +110,7 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
   color:var(--accent); letter-spacing:.04em; display:flex; align-items:center;
   gap:8px; }
 .step .n::after { content:""; height:1px; flex:1; background:var(--rule); }
-.step h3 { margin:0; font-size:15.5px; font-weight:600; letter-spacing:-.008em;
+.step h2 { margin:0; font-size:15.5px; font-weight:600; letter-spacing:-.008em;
   text-wrap:balance; }
 .step p { margin:0; font-size:13.5px; color:var(--ink2); }
 
@@ -137,7 +143,8 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
 .stmt-top { display:flex; flex-wrap:wrap; gap:12px 16px;
   justify-content:space-between; align-items:flex-start; }
 .asset { display:flex; flex-direction:column; gap:5px; }
-.asset .name { font-size:19px; font-weight:600; letter-spacing:-.014em; }
+.asset .name { font-size:19px; font-weight:600; letter-spacing:-.014em;
+  margin:0; }
 .pill { display:inline-flex; align-items:center; gap:7px; align-self:flex-start;
   padding:5px 12px 5px 10px; border-radius:999px; font-size:12.5px;
   font-weight:600; line-height:1.4; white-space:nowrap; }
@@ -254,6 +261,10 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
 .rec-note { font-size:12px; color:var(--off); background:var(--off-soft);
   padding:6px 9px; border-radius:7px; }
 .rec-empty { padding:26px 20px; color:var(--ink3); font-size:13.5px; }
+.rec-warn { padding:13px 20px; color:var(--off); background:var(--off-soft);
+  font-size:12.5px; display:flex; gap:12px; align-items:center;
+  justify-content:space-between; border-bottom:1px solid var(--rule2); }
+.rec-warn .btn { flex:none; }
 
 .side { display:flex; flex-direction:column; gap:20px; }
 .verify { padding:18px 20px 19px; display:flex; flex-direction:column; gap:12px; }
@@ -269,15 +280,15 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
 /* ----------------------------------------------------------------- toasts */
 .toasts { position:fixed; right:20px; bottom:20px; display:flex;
   flex-direction:column; gap:9px; z-index:50; max-width:min(370px,calc(100vw - 40px)); }
-.toast { background:var(--ink); color:var(--paper); border-radius:12px;
+.toast { background:var(--toast-bg); color:var(--toast-fg); border-radius:12px;
   padding:14px 16px; box-shadow:0 12px 32px -10px rgba(16,23,37,.55);
   display:flex; flex-direction:column; gap:4px;
   animation:pop .42s cubic-bezier(.22,.61,.36,1); }
 .toast .t { font-size:13.5px; font-weight:600; display:flex; gap:8px;
   align-items:center; }
-.toast .t .led { width:7px; height:7px; border-radius:50%; background:#22e08d;
-  flex:none; }
-.toast .d { font-size:12.5px; color:#a9b4c8; }
+.toast .t .led { width:7px; height:7px; border-radius:50%;
+  background:var(--toast-led); flex:none; }
+.toast .d { font-size:12.5px; color:var(--toast-dim); }
 @keyframes pop { from { opacity:0; transform:translateY(10px) scale(.97); } }
 
 /* ----------------------------------------------------------------- footer */
@@ -303,7 +314,7 @@ footer .mono { font-size:12px; }
   <div class="mast">
     <div class="brand">
       <div class="wordmark"><span class="dot"></span>Remit-to-Own</div>
-      <p class="tagline" id="tagline"></p>
+      <h1 class="tagline" id="tagline"></h1>
     </div>
     <div class="langs" role="group" id="langs" aria-label="Language"></div>
   </div>
@@ -351,28 +362,35 @@ const I18N = {
     on:"Running", off:"Switched off", owned:"Owned outright",
     subOn:"Paid up until {date}.",
     subOff:"Stopped on {date}. It starts again the moment a payment is proven.",
+    subNever:"Not started yet. It runs as soon as the first payment is proven.",
+    subForever:"Paid up indefinitely.",
     subOwned:"Paid in full. It never switches off again.",
     heroLeft:"Still to pay to own it", heroOwned:"Nothing left to pay",
     paidOf:"{paid} paid of {total}", pct:"{n}% owned",
     fRate:"Rate", fRateV:"{amt} buys {n} days",
-    fRuns:"Runs until", fRunsForever:"Never stops",
+    fRuns:"Runs until", fRunsForever:"Never stops", fRunsNever:"Not started",
     fInst:"Installments", fInstV:"{a} of {b}",
     fPaid:"Payments proven",
     lockOn:"If nothing more arrives it stops on <strong>{date}</strong>. Sending <strong>{amt}</strong> adds <strong>{n} days</strong>.",
     lockOff:"It is off right now. Sending <strong>{amt}</strong> starts it again for <strong>{n} days</strong>.",
+    lockNever:"It has not started yet. Sending <strong>{amt}</strong> starts it for <strong>{n} days</strong>.",
+    lockForever:"It will not stop within any date this page can show.",
     lockOwned:"Nothing can switch it off now.",
     payTitle:"Send USDC on Ethereum to",
     payNote:"This address belongs to this plan alone. That is how the contract knows whose payment it is.",
     copy:"Copy", copied:"Copied",
     recTitle:"Payment record", recEmpty:"No payment has been proven yet.",
-    recLoading:"Reading the chain", recCredited:"credited",
+    recFailed:"The payment record could not be read just now. Nothing has been lost; try again in a moment.",
+    recPartial:"Recent payments only. The full record could not be read just now.",
+    recRetry:"Try again", unknown:"Unknown",
+    recLoading:"Reading the chain",
     recLeftAfter:"{amt} left after this", recSettledRow:"Paid in full",
     recCapped:"Only the outstanding balance was taken. The rest was not charged.",
     recCount:"{n} proven",
     toastT:"Payment proven", toastD:"{amt} arrived. {n} days added.",
     toastOwnedT:"Paid in full", toastOwnedD:"The machine belongs to the buyer now.",
     fContract:"Contract", fChain:"Creditcoin CC3 testnet",
-    fSource:"Payments proven from Ethereum mainnet", fExplorer:"View on explorer",
+    fSource:"Payments proven from Ethereum mainnet",
     loading:"Loading plans from the chain",
     errPlan:"Could not read this plan from the chain.",
     plan:"Plan",
@@ -392,28 +410,35 @@ const I18N = {
     on:"작동 중", off:"정지됨", owned:"소유 완료",
     subOn:"{date}까지 사용료가 채워져 있습니다.",
     subOff:"{date}에 멈췄습니다. 입금이 증명되는 즉시 다시 돌아갑니다.",
+    subNever:"아직 시작되지 않았습니다. 첫 입금이 증명되면 바로 돌아갑니다.",
+    subForever:"무기한으로 사용료가 채워져 있습니다.",
     subOwned:"전액 납부됐습니다. 다시는 멈추지 않습니다.",
     heroLeft:"소유까지 남은 금액", heroOwned:"남은 금액 없음",
     paidOf:"{total} 중 {paid} 납부", pct:"{n}% 소유",
     fRate:"요율", fRateV:"{amt}에 {n}일",
-    fRuns:"작동 기한", fRunsForever:"멈추지 않음",
+    fRuns:"작동 기한", fRunsForever:"멈추지 않음", fRunsNever:"시작 전",
     fInst:"할부 회차", fInstV:"{b}회 중 {a}회",
     fPaid:"증명된 납부",
     lockOn:"더 들어오지 않으면 <strong>{date}</strong>에 멈춥니다. <strong>{amt}</strong>를 보내면 <strong>{n}일</strong>이 늘어납니다.",
     lockOff:"지금 멈춰 있습니다. <strong>{amt}</strong>를 보내면 <strong>{n}일</strong> 동안 다시 돌아갑니다.",
+    lockNever:"아직 시작되지 않았습니다. <strong>{amt}</strong>를 보내면 <strong>{n}일</strong> 동안 돌아갑니다.",
+    lockForever:"이 페이지가 표시할 수 있는 어떤 날짜에도 멈추지 않습니다.",
     lockOwned:"이제 무엇도 이 기계를 멈출 수 없습니다.",
     payTitle:"이더리움에서 USDC를 보낼 주소",
     payNote:"이 주소는 이 플랜에만 쓰입니다. 컨트랙트는 이 주소로 누구의 입금인지 판단합니다.",
     copy:"복사", copied:"복사됨",
     recTitle:"납부 기록", recEmpty:"아직 증명된 납부가 없습니다.",
-    recLoading:"체인을 읽는 중", recCredited:"반영",
+    recFailed:"지금은 납부 기록을 읽지 못했습니다. 기록이 사라진 것은 아니니 잠시 후 다시 시도해 주세요.",
+    recPartial:"최근 납부만 표시하고 있습니다. 전체 기록은 지금 읽지 못했습니다.",
+    recRetry:"다시 시도", unknown:"확인 불가",
+    recLoading:"체인을 읽는 중",
     recLeftAfter:"이후 {amt} 남음", recSettledRow:"전액 납부",
     recCapped:"남은 금액만큼만 받았습니다. 나머지는 청구되지 않았습니다.",
     recCount:"{n}건 증명",
     toastT:"납부가 증명됐습니다", toastD:"{amt} 도착. {n}일 추가.",
     toastOwnedT:"전액 납부", toastOwnedD:"이제 이 기계는 구매자의 것입니다.",
     fContract:"컨트랙트", fChain:"크레딧코인 CC3 테스트넷",
-    fSource:"이더리움 메인넷 입금을 증명", fExplorer:"익스플로러에서 보기",
+    fSource:"이더리움 메인넷 입금을 증명",
     loading:"체인에서 플랜을 불러오는 중",
     errPlan:"이 플랜을 체인에서 읽지 못했습니다.",
     plan:"플랜",
@@ -433,28 +458,35 @@ const I18N = {
     on:"稼働中", off:"停止中", owned:"所有済み",
     subOn:"{date} まで利用料が入っています。",
     subOff:"{date} に停止しました。入金が証明され次第すぐ再開します。",
+    subNever:"まだ開始していません。最初の入金が証明され次第、動き始めます。",
+    subForever:"無期限で利用料が入っています。",
     subOwned:"全額支払い済みです。二度と停止しません。",
     heroLeft:"所有までの残額", heroOwned:"残額なし",
     paidOf:"{total} のうち {paid} 支払い済み", pct:"{n}% 所有",
     fRate:"レート", fRateV:"{amt} で {n} 日",
-    fRuns:"稼働期限", fRunsForever:"停止しません",
+    fRuns:"稼働期限", fRunsForever:"停止しません", fRunsNever:"開始前",
     fInst:"分割回数", fInstV:"{b} 回中 {a} 回",
     fPaid:"証明された支払い",
     lockOn:"追加の入金がなければ <strong>{date}</strong> に停止します。<strong>{amt}</strong> を送ると <strong>{n} 日</strong>延長されます。",
     lockOff:"現在停止しています。<strong>{amt}</strong> を送ると <strong>{n} 日間</strong>また動きます。",
+    lockNever:"まだ開始していません。<strong>{amt}</strong> を送ると <strong>{n} 日間</strong>動きます。",
+    lockForever:"このページが表示できる範囲では停止しません。",
     lockOwned:"もう何もこの機械を止められません。",
     payTitle:"イーサリアムで USDC を送るアドレス",
     payNote:"このアドレスはこのプラン専用です。コントラクトはこれで誰の支払いかを判別します。",
     copy:"コピー", copied:"コピーしました",
     recTitle:"支払い記録", recEmpty:"証明された支払いはまだありません。",
-    recLoading:"チェーンを読み込み中", recCredited:"反映",
+    recFailed:"ただ今、支払い記録を読み込めませんでした。記録が消えたわけではありません。しばらくしてからお試しください。",
+    recPartial:"直近の支払いのみ表示しています。全記録は今読み込めませんでした。",
+    recRetry:"再試行", unknown:"不明",
+    recLoading:"チェーンを読み込み中",
     recLeftAfter:"この後の残り {amt}", recSettledRow:"全額支払い",
     recCapped:"残額分だけ受け取りました。超過分は請求していません。",
     recCount:"{n} 件",
     toastT:"支払いが証明されました", toastD:"{amt} 着金。{n} 日追加。",
     toastOwnedT:"全額支払い完了", toastOwnedD:"この機械は購入者のものになりました。",
     fContract:"コントラクト", fChain:"Creditcoin CC3 テストネット",
-    fSource:"イーサリアム メインネットの入金を証明", fExplorer:"エクスプローラで見る",
+    fSource:"イーサリアム メインネットの入金を証明",
     loading:"チェーンからプランを読み込み中",
     errPlan:"このプランをチェーンから読み取れませんでした。",
     plan:"プラン",
@@ -474,28 +506,35 @@ const I18N = {
     on:"运转中", off:"已停机", owned:"已归属",
     subOn:"使用期已付至 {date}。",
     subOff:"已于 {date} 停机。付款一经证明立即恢复。",
+    subNever:"尚未启动。第一笔付款获得证明后即刻运转。",
+    subForever:"使用期已无限期支付。",
     subOwned:"已付清全款，不会再停机。",
     heroLeft:"距离拥有还需支付", heroOwned:"无需再付",
     paidOf:"已付 {paid}，共 {total}", pct:"已拥有 {n}%",
     fRate:"费率", fRateV:"{amt} 可用 {n} 天",
-    fRuns:"运转至", fRunsForever:"不会停机",
+    fRuns:"运转至", fRunsForever:"不会停机", fRunsNever:"尚未启动",
     fInst:"分期", fInstV:"{b} 期中的 {a} 期",
     fPaid:"已证明的付款",
     lockOn:"若没有新的付款，将于 <strong>{date}</strong> 停机。发送 <strong>{amt}</strong> 可延长 <strong>{n} 天</strong>。",
     lockOff:"目前已停机。发送 <strong>{amt}</strong> 可重新运转 <strong>{n} 天</strong>。",
+    lockNever:"尚未启动。发送 <strong>{amt}</strong> 即可运转 <strong>{n} 天</strong>。",
+    lockForever:"在本页可显示的任何日期内都不会停机。",
     lockOwned:"现在没有任何东西能让它停机。",
     payTitle:"在以太坊上发送 USDC 至",
     payNote:"该地址仅属于此计划。合约据此判断这笔付款属于谁。",
     copy:"复制", copied:"已复制",
     recTitle:"付款记录", recEmpty:"尚无已证明的付款。",
-    recLoading:"正在读取链上数据", recCredited:"已计入",
+    recFailed:"暂时无法读取付款记录。记录并未丢失，请稍后重试。",
+    recPartial:"仅显示最近的付款。完整记录暂时无法读取。",
+    recRetry:"重试", unknown:"无法确认",
+    recLoading:"正在读取链上数据",
     recLeftAfter:"此后剩余 {amt}", recSettledRow:"已付清",
     recCapped:"只收取了剩余应付金额，超出部分未收取。",
     recCount:"已证明 {n} 笔",
     toastT:"付款已获证明", toastD:"{amt} 已到账，增加 {n} 天。",
     toastOwnedT:"已付清全款", toastOwnedD:"机器现已归购买者所有。",
     fContract:"合约", fChain:"Creditcoin CC3 测试网",
-    fSource:"证明来自以太坊主网的付款", fExplorer:"在浏览器中查看",
+    fSource:"证明来自以太坊主网的付款",
     loading:"正在从链上加载计划",
     errPlan:"无法从链上读取该计划。",
     plan:"计划",
@@ -535,6 +574,9 @@ const DECIMALS = 6, SYMBOL = "USDC";
 /* The node caps eth_getLogs at a ten second query, so history comes from the
    indexer and only the live tail is polled from the node. */
 const TAIL_BLOCKS = 1200, POLL_MS = 12000, MAX_SCAN = 20000;
+/* MAX_DAYS_PER_INSTALLMENT in the contract is 3650, and a payment can cover
+   many instalments, so this only has to be past anything real. */
+const MAX_DAYS = 3650000;
 
 /* ================================================================== state */
 let lang = pickLang();
@@ -544,10 +586,15 @@ let events = [];           // ascending
 let seen = new Set();
 let lastBlock = null;
 let poller = null, ticker = null, polling = false;
+let recordState = "ok";   // ok | partial | failed
 let reqToken = 0;          // guards against out of order plan switches
 
 function pickLang() {
-  const saved = localStorage.getItem("rto-lang");
+  /* a merchant hands a buyer a link, so the language can travel in the URL */
+  const asked = new URLSearchParams(location.search).get("lang");
+  if (asked && I18N[asked]) return asked;
+  let saved = null;
+  try { saved = localStorage.getItem("rto-lang"); } catch (e) { /* blocked */ }
   if (saved && I18N[saved]) return saved;
   const n = (navigator.language || "en").toLowerCase();
   if (n.startsWith("ko")) return "ko";
@@ -598,10 +645,21 @@ function money(v, opt) {
 const amt = (v, opt) => money(v, opt) + " " + SYMBOL;
 const dateOf = ts => new Date(ts * 1000).toLocaleDateString(I18N[lang]._locale,
   { year:"numeric", month:"short", day:"numeric" });
-const stampOf = ts => new Date(ts * 1000).toLocaleString(I18N[lang]._locale,
-  { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
+const stampOf = ts => {
+  if (!Number.isFinite(ts) || ts < Number(DATE_MIN) || ts > Number(DATE_MAX)) return null;
+  return new Date(ts * 1000).toLocaleString(I18N[lang]._locale,
+    { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
+};
 const shortAddr = a => a.slice(0, 6) + "…" + a.slice(-4);
-const MAXU64 = 18446744073709551615n;
+/* Round away from the binary representation before formatting, so a value of
+   3.05 shows as 3.1 rather than 3.0. */
+const dec1 = v => (Math.round(v * 10) / 10).toFixed(1);
+/* The contract cannot set activeUntil earlier than block.timestamp, so anything
+   below this is not a deadline at all; anything above it is not a date a reader
+   can use. Both ends are worded, never formatted, or the page announces that a
+   machine stopped in 1970 or on an Invalid Date. */
+const DATE_MIN = 1600000000n;
+const DATE_MAX = 253402300799n;
 
 /* ============================================================ chrome, i18n */
 function paintChrome() {
@@ -615,8 +673,8 @@ function paintChrome() {
     b.addEventListener("click", () => setLang(b.dataset.l)));
 
   document.getElementById("how").innerHTML = [1, 2, 3].map(i =>
-    '<div class="step"><span class="n">' + i + '</span><h3>' +
-    esc(T("s" + i + "t")) + "</h3><p>" + esc(T("s" + i + "b")) + "</p></div>").join("");
+    '<div class="step"><span class="n">' + i + '</span><h2>' +
+    esc(T("s" + i + "t")) + "</h2><p>" + esc(T("s" + i + "b")) + "</p></div>").join("");
 
   document.getElementById("rec-title").textContent = T("recTitle");
   document.getElementById("footer").innerHTML =
@@ -629,7 +687,7 @@ function paintChrome() {
 function setLang(l) {
   if (!I18N[l] || l === lang) return;
   lang = l;
-  localStorage.setItem("rto-lang", l);
+  try { localStorage.setItem("rto-lang", l); } catch (e) { /* blocked */ }
   paintChrome();
   renderPicker();
   renderStatement();
@@ -689,26 +747,38 @@ function renderStatement() {
   const p = current, st = stateOf(p);
   const owned = st === "owned";
   const left = p.price > p.paid ? p.price - p.paid : 0n;
-  const pct = p.price > 0n ? Number((p.paid * 10000n) / p.price) / 100 : 0;
+  /* Scale before dividing or the integer division throws away the digit that
+     is about to be displayed, and round explicitly because (3.05).toFixed(1)
+     answers "3.0" in binary floating point. */
+  const pct = p.price > 0n ? Number((p.paid * 1000000n) / p.price) / 10000 : 0;
   const until = Number(p.activeUntil);
-  const forever = p.activeUntil === MAXU64 || owned;
-  const instDone = p.installment > 0n ? Number((p.paid * 100n) / p.installment) / 100 : 0;
-  const instAll = p.installment > 0n ? Number((p.price * 100n) / p.installment) / 100 : 0;
+  const forever = owned || p.activeUntil > DATE_MAX;
+  const instDone = p.installment > 0n ? Number((p.paid * 10000n) / p.installment) / 10000 : 0;
+  const instAll = p.installment > 0n ? Number((p.price * 10000n) / p.installment) / 10000 : 0;
+
+  /* a plan that has never been paid has no stop date; rendering activeUntil 0
+     as a date announces that the machine stopped on 1 January 1970 */
+  const never = !forever && p.activeUntil < DATE_MIN;
 
   const sub = owned ? T("subOwned")
+    : never ? T("subNever")
+    : forever ? T("subForever")
     : st === "on" ? t("subOn", { date: dateOf(until) })
     : t("subOff", { date: dateOf(until) });
 
+  const inst1 = amt(p.installment, { whole:true });
   const lock = owned ? T("lockOwned")
+    : never ? t("lockNever", { amt: inst1, n: p.days })
+    : forever ? T("lockForever")
     : st === "on"
-      ? t("lockOn", { date: dateOf(until), amt: amt(p.installment, { whole:true }), n: p.days })
-      : t("lockOff", { amt: amt(p.installment, { whole:true }), n: p.days });
+      ? t("lockOn", { date: dateOf(until), amt: inst1, n: p.days })
+      : t("lockOff", { amt: inst1, n: p.days });
 
   el.setAttribute("data-owned", owned ? "1" : "0");
   el.innerHTML =
     '<div class="stmt-top">' +
       '<div class="asset">' +
-        '<span class="name">' + esc(nameOf(current)) + "</span>" +
+        '<h2 class="name">' + esc(nameOf(current)) + "</h2>" +
         '<span class="pill" data-s="' + st + '"><span class="led"></span>' +
         esc(T(st)) + "</span></div>" +
       '<p class="substate">' + esc(sub) + "</p>" +
@@ -722,18 +792,20 @@ function renderStatement() {
       '<span class="under"><span>' +
         esc(t("paidOf", { paid: money(p.paid), total: amt(p.price, { whole:true }) })) +
         '</span><span class="sep"></span><span>' +
-        esc(t("pct", { n: pct.toFixed(1) })) + "</span></span>" +
+        esc(t("pct", { n: dec1(pct) })) + "</span></span>" +
     "</div>" +
 
     '<div class="facts">' +
-      fact(T("fRate"), esc(t("fRateV",
-        { amt: amt(p.installment, { whole:true }), n: p.days }))) +
+      fact(T("fRate"), esc(t("fRateV", { amt: inst1, n: p.days }))) +
       fact(T("fRuns"), forever
         ? "<small>" + esc(T("fRunsForever")) + "</small>"
+        : never ? "<small>" + esc(T("fRunsNever")) + "</small>"
         : esc(dateOf(until))) +
       fact(T("fInst"), esc(t("fInstV",
-        { a: instDone.toFixed(1).replace(/\.0$/, ""), b: Math.round(instAll) }))) +
-      fact(T("fPaid"), String(events.length)) +
+        { a: dec1(instDone).replace(/\.0$/, ""), b: Math.round(instAll) }))) +
+      fact(T("fPaid"), recordState === "ok" ? String(events.length)
+        : recordState === "partial" ? String(events.length) + "+"
+        : "<small>" + esc(T("unknown")) + "</small>") +
     "</div>" +
 
     '<div class="lock"><svg class="mark" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
@@ -782,7 +854,7 @@ function renderVerify() {
    how many are left instead of decoding a percentage. */
 function track(done, total, pct) {
   const n = Math.round(total);
-  const aria = t("fInstV", { a: done.toFixed(1).replace(/\.0$/, ""), b: n });
+  const aria = t("fInstV", { a: dec1(done).replace(/\.0$/, ""), b: n });
   if (!(n >= 2 && n <= 60)) {
     return '<div class="track plain" role="img" aria-label="' + esc(aria) +
       '"><div class="fill" style="width:' +
@@ -801,6 +873,14 @@ function renderRecord(freshKey) {
   const body = document.getElementById("rec-body");
   const count = document.getElementById("rec-count");
   count.textContent = events.length ? t("recCount", { n: events.length }) : "";
+  if (recordState === "failed") {
+    body.innerHTML = '<div class="rec-warn">' + esc(T("recFailed")) +
+      '<button type="button" class="btn" id="rec-retry">' + esc(T("recRetry")) +
+      "</button></div>";
+    const b2 = document.getElementById("rec-retry");
+    if (b2 && current) b2.addEventListener("click", () => select(current.id));
+    return;
+  }
   if (!events.length) {
     body.innerHTML = '<div class="rec-empty">' + esc(T("recEmpty")) + "</div>";
     return;
@@ -812,24 +892,40 @@ function renderRecord(freshKey) {
     return '<li class="' + (e.key === freshKey ? "fresh" : "") + '">' +
       '<div class="rec-row"><span class="rec-amt"><span class="plus">+</span>' +
         money(e.credited) + " " + SYMBOL + "</span>" +
-        '<span class="rec-when">' + esc(e.time ? stampOf(e.time) : "#" + e.block) + "</span></div>" +
+        '<span class="rec-when">' + esc((e.time && stampOf(e.time)) || "#" + e.block) + "</span></div>" +
       '<div class="rec-meta"><span>' +
         esc(leftAfter > 0n ? t("recLeftAfter", { amt: amt(leftAfter) }) : T("recSettledRow")) +
-        '</span><a class="who" href="' + EXPLORER + "/tx/" + e.tx +
-        '" target="_blank" rel="noopener">' + shortAddr(e.payer) + "</a></div>" +
+        "</span>" + payerCell(e) + "</div>" +
       (capped ? '<div class="rec-note">' + esc(T("recCapped")) + "</div>" : "") +
       "</li>";
   }).join("");
-  body.innerHTML = '<ul class="rec-list">' + rows + "</ul>";
+  body.innerHTML = (recordState === "partial"
+      ? '<div class="rec-warn">' + esc(T("recPartial")) + "</div>" : "") +
+    '<ul class="rec-list">' + rows + "</ul>";
+}
+
+function payerCell(e) {
+  const who = e.payer ? esc(shortAddr(e.payer)) : "";
+  if (!who) return "";
+  if (!e.tx) return '<span class="who">' + who + "</span>";
+  return '<a class="who" href="' + esc(EXPLORER + "/tx/" + e.tx) +
+    '" target="_blank" rel="noopener">' + who + "</a>";
 }
 
 /* ============================================================ log reading */
+/* Log fields arrive from a public node and a third party indexer. They are
+   only ever hex, so anything that is not hex is not rendered as a link. */
+const isHex = (v, n) => typeof v === "string" &&
+  v.length === n + 2 && v.slice(0, 2) === "0x" && /^[0-9a-fA-F]+$/.test(v.slice(2));
+
 function decodeLog(lg) {
   const d = lg.data.replace(/^0x/, "");
+  const tx = isHex(lg.transactionHash, 64) ? lg.transactionHash : null;
+  const payer = ad(lg.topics[2].slice(2));
   return {
     key: lg.transactionHash + ":" + lg.logIndex,
-    tx: lg.transactionHash,
-    payer: ad(lg.topics[2].slice(2)),
+    tx,
+    payer: isHex(payer, 40) ? payer : null,
     amount: bn(w(d, 0)),
     paidTotal: bn(w(d, 1)),
     activeUntil: bn(w(d, 2)),
@@ -845,14 +941,28 @@ function fillCredited() {
   for (const e of events) { e.credited = e.paidTotal - prev; prev = e.paidTotal; }
 }
 
+/* Telling somebody who has been paying that no payment exists is the single
+   worst thing this page can do, so a failed read is never reported as an empty
+   history. It falls back to whatever the node can still see and says so. */
 async function historyFromIndexer(planId) {
   const u = EXPLORER + "/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest" +
     "&address=" + CONTRACT + "&topic0=" + TOPIC_PAID + "&topic1=" + planId +
     "&topic0_1_opr=and";
   const r = await fetch(u);
+  if (!r.ok) throw new Error("indexer " + r.status);
   const j = await r.json();
-  if (!j || !Array.isArray(j.result)) return [];
+  if (!j || !Array.isArray(j.result)) {
+    if (j && j.status === "1") return [];        // a genuine empty answer
+    throw new Error("indexer returned no log array");
+  }
   return j.result.map(decodeLog).sort((a, b) => a.block - b.block || 0);
+}
+
+async function historyFromNode(planId) {
+  const head = hexnum(await rpc("eth_blockNumber", []));
+  const from = Math.max(0, head - MAX_SCAN + 1);
+  const logs = await tailFromNode(planId, from, head);
+  return { logs, head };
 }
 async function tailFromNode(planId, from, to) {
   return (await rpc("eth_getLogs", [{
@@ -892,12 +1002,19 @@ async function poll() {
     renderRecord(last.key);
     renderPicker();
 
-    const days = Math.max(1, Math.round(
-      Number(last.credited) * current.days / Number(current.installment)));
+    const days = daysBought(last.credited, current);
     if (current.settled) toast(T("toastOwnedT"), T("toastOwnedD"));
     else toast(T("toastT"), t("toastD", { amt: amt(last.credited), n: days }));
   } catch (e) { /* a public node hiccup is not worth a visible error */ }
   finally { polling = false; }
+}
+
+/* An installment of zero would divide by zero and offer the reader Infinity
+   days, so the rate is only stated when there is a rate to state. */
+function daysBought(credited, plan) {
+  if (!plan || plan.installment <= 0n) return 1;
+  const d = Math.round(Number(credited) * plan.days / Number(plan.installment));
+  return Number.isFinite(d) ? Math.max(1, Math.min(d, MAX_DAYS)) : 1;
 }
 
 function toast(title, detail) {
@@ -925,14 +1042,29 @@ async function select(id) {
   document.getElementById("rec-count").textContent = "";
 
   let hist = [];
-  try { hist = await historyFromIndexer(id); }
-  catch (e) { hist = []; }
+  recordState = "ok";
+  try {
+    hist = await historyFromIndexer(id);
+  } catch (indexerError) {
+    /* the node cannot answer a full history inside its query timeout, so this
+       is deliberately a recent window and the page admits as much */
+    try {
+      const partial = await historyFromNode(id);
+      hist = partial.logs;
+      recordState = "partial";
+      lastBlock = partial.head;
+    } catch (nodeError) {
+      hist = [];
+      recordState = "failed";
+    }
+  }
   if (token !== reqToken) return;
 
   events = hist;
   events.forEach(e => seen.add(e.key));
   fillCredited();
-  if (events.length) lastBlock = events[events.length - 1].block;
+  if (recordState !== "partial" && events.length)
+    lastBlock = events[events.length - 1].block;
   renderStatement();
   renderRecord();
 
