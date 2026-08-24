@@ -134,7 +134,7 @@ cd ../relay && python watch_plan.py --plan 0x<planId> --chainkey 3 --blocks 60 -
 ```
 
 `--chainkey 1` is Ethereum Sepolia, `3` is Ethereum mainnet. Both are attested on
-CC3 testnet, so real mainnet payments are provable at no cost.
+CC3 testnet, so live mainnet transfers are provable at no cost.
 
 ---
 
@@ -144,8 +144,19 @@ CC3 testnet, so real mainnet payments are provable at no cost.
 - The device lock is expressed as on-chain state (`isActive`). Wiring that to a
   real device controller is a hardware integration, not part of this submission.
 - For the demo, plans are opened against **live mainnet addresses that already
-  receive USDC**, so that genuine, independently generated payments drive the
-  system. A merchant in production generates a fresh collection address per plan.
+  receive USDC**, so that genuine, independently generated transfers drive the
+  system. The proofs and the state changes are real; the payers are strangers
+  moving money through DeFi rather than customers buying a truck. Aiming the
+  pipeline at live traffic is what surfaced the multi-token bug in section 5 of
+  `docs/TECHNICAL.md`, which transfers written for the demo would never have
+  produced. A merchant in production generates a fresh collection address per plan.
+- **Plans are opened by the operator.** A proof shows that a transfer happened;
+  nothing on chain shows who an address belongs to. That restriction is
+  deliberate, and it is the fix for the critical audit finding: left open, the
+  same gap lets anyone register a busy address as their collector and bank a
+  stranger's deposit. The roadmap closes it with Attestcoin itself, by having an
+  address prove control through a marked transfer that is verified exactly the
+  way a payment is.
 - Attestation lags the source chain by roughly nine minutes by design, so a
   payment is credited shortly after it lands, not instantly. For monthly
   financing that gap does not matter.

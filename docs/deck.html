@@ -45,6 +45,9 @@
   .p-off { background:rgba(226,69,90,.16); color:var(--off); }
   .p-own { background:rgba(224,168,58,.16); color:var(--gold); }
   .big { font-size:88px; font-weight:800; letter-spacing:-.03em; line-height:1; }
+  .quote { border-left:3px solid var(--acc); padding:2px 0 2px 20px; margin-top:22px; }
+  .quote p { font-size:21px; line-height:1.42; max-width:64ch; }
+  .quote .src { font-size:14px; color:var(--dim); margin-top:9px; }
 </style>
 </head>
 <body>
@@ -101,7 +104,7 @@
 <!-- 5 -->
 <section class="slide">
   <div class="kicker">Attestcoin is the whole mechanism</div>
-  <h2>From a transfer abroad to a device that works</h2>
+  <h2>A contract cannot read another chain</h2>
   <div class="flow">
     <div class="step">Relative sends USDC<br><span class="dim">on Ethereum</span></div>
     <div class="arrow">→</div>
@@ -111,27 +114,29 @@
     <div class="arrow">→</div>
     <div class="step">Credit the plan<br><span class="dim">device stays on</span></div>
   </div>
-  <ul style="margin-top:30px">
-    <li>A stablecoin transfer carries no memo, so each plan is issued its own collection address. That is what tells the contract whose payment it is.</li>
-    <li>Invalid proof and the call reverts. No proof, no payment, no service.</li>
-    <li>A replay guard means the same payment can never be counted twice, verified live on chain.</li>
-    <li><b>Remove Attestcoin and there is no way for Creditcoin to know the money ever moved.</b></li>
+  <ul style="margin-top:24px">
+    <li>The transfer is public. Anyone can open Etherscan and read it. <b>A contract on Creditcoin cannot.</b> It has no eyes outside its own chain and knows only what somebody hands it.</li>
+    <li>So it either trusts the messenger or verifies the proof. An invalid proof reverts the whole call, and a replay guard means one payment can never count twice.</li>
+    <li>Anyone can submit a proof, and a relayer can stall but cannot lie.</li>
   </ul>
+  <div class="quote">
+    <p>&ldquo;I have been making payments and yet am told that I have not paid. The whole village is complaining.&rdquo;</p>
+    <div class="src">Off-grid solar customer, 60 Decibels 2024. She could see her own payments. The company's ledger was the one that counted. Here the proof moves the ledger, so nobody has to be persuaded.</div>
+  </div>
 </section>
 
 <!-- 6 -->
 <section class="slide">
   <div class="kicker">It already works, on CC3 testnet</div>
-  <h2>Driven by real Ethereum mainnet payments</h2>
+  <h2>Run against live Ethereum mainnet traffic</h2>
   <table>
     <tr><th>Plan</th><th>Payments proven</th><th>State</th></tr>
     <tr><td>Delivery truck, 80,000 USDC</td><td class="mono">342.59, 1,500.00, 599.68</td><td><span class="pill p-on">RUNNING</span> 35 days bought</td></tr>
     <tr><td>Delivery truck, 50,000 USDC</td><td class="mono">23.48, 1,490.71, 97.47, 107.41, 1,946.58</td><td><span class="pill p-on">RUNNING</span> 53 days bought</td></tr>
     <tr><td>Motorcycle, 1,800 USDC</td><td class="mono">89.42, then the balance</td><td><span class="pill p-own">OWNED</span> paid off</td></tr>
-    <tr><td>Cargo tricycle, 5,000 USDC</td><td class="mono">326.19, then the balance</td><td><span class="pill p-own">OWNED</span> paid off</td></tr>
     <tr><td>Solar home system, 800 USDC</td><td class="mono">one transfer, capped at the balance</td><td><span class="pill p-own">OWNED</span> paid off</td></tr>
   </table>
-  <p class="lead dim" style="margin-top:24px;font-size:18px">Not simulated. Each of these is a genuine USDC transfer on Ethereum mainnet, proven on Creditcoin through the BlockProver precompile. Anyone can re-check the state with one <span class="mono">cast call</span>.</p>
+  <p class="lead dim" style="margin-top:18px;font-size:17px;max-width:none">Real transfers, real proofs, real state on Creditcoin, re-checkable with one <span class="mono">cast call</span>. The payers are strangers moving money through DeFi rather than customers buying a truck: aiming the pipeline at busy mainnet addresses put it in front of live traffic for free, and that is what earned its keep. Payment transactions are often swaps carrying several tokens, which the first version rejected outright, killing four proofs in six. Transfers we wrote ourselves would never have found it.</p>
 </section>
 
 <!-- 7 -->
@@ -155,19 +160,20 @@
 
 <!-- 8 -->
 <section class="slide">
-  <div class="kicker">Why Creditcoin</div>
-  <h2>Money that already moves, on a chain that wants it</h2>
+  <div class="kicker">Why two chains</div>
+  <h2>Where the money is, and where the ledger can afford to be</h2>
   <div class="grid2">
     <div>
-      <div class="big" style="color:var(--acc)">$700B</div>
-      <p class="lead" style="margin-top:12px">reached low and middle income countries as remittances in 2024, much of it to households buying exactly these assets on installments.</p>
-      <p class="dim" style="margin-top:10px;font-size:13px">World Bank, Migration and Development Brief</p>
+      <div class="big" style="color:var(--acc)">&lt; 1&cent;</div>
+      <p class="lead" style="margin-top:12px">to prove one payment on Creditcoin, measured. The same record on Ethereum costs dollars, which is more than a single instalment is worth on an 800 USDC solar plan.</p>
+      <p class="dim" style="margin-top:10px;font-size:13px">This is not a saving. Below this price the product does not exist.</p>
     </div>
     <ul>
-      <li>Creditcoin exists to connect real-world credit to on-chain rails. This is that, for a purchase people already make.</li>
-      <li>Ethereum is where the stablecoins are. Attestcoin is how Creditcoin can finally see them.</li>
-      <li>The merchant needs no crypto knowledge: they read one boolean, <span class="mono">isActive</span>.</li>
-      <li>Every payment settles as on-chain history for a household that had none.</li>
+      <li>Ethereum is where the stablecoins are. Creditcoin is where a ledger can be rewritten on every small payment without eating the payment.</li>
+      <li>Attestcoin is the only thing that lets those two facts hold at once.</li>
+      <li>The merchant needs no crypto knowledge. They read one boolean, <span class="mono">isActive</span>.</li>
+      <li>Every proven payment leaves a repayment record for a household that had none. Whether a lender ever prices that record is not something this project can claim yet.</li>
+      <li class="dim" style="font-size:16px">$700B reached low and middle income countries as remittances in 2024. World Bank.</li>
     </ul>
   </div>
 </section>
@@ -180,12 +186,13 @@
     <div class="c">
       <div class="num">BUILT AND VERIFIED</div>
       <h3>The full loop</h3>
-      <p>Contract on CC3, proof relay, and a device page that watches the chain and alerts the moment a payment is proven. Real mainnet payments proven end to end, with an audit regression suite behind it.</p>
+      <p>Contract on CC3, proof relay, and a device page that watches the chain and alerts the moment a payment is proven, in four languages. Proven end to end against live mainnet transfers, with an adversarial audit and a regression suite behind it.</p>
     </div>
     <ul>
       <li>The device lock is on-chain state. Wiring it to a real controller is a hardware integration, not this submission.</li>
       <li>Attestation lags the source chain by about nine minutes by design. For monthly financing that is immaterial.</li>
-      <li>Collection addresses are issued by the operator, because nothing on chain can prove who an address belongs to. The roadmap replaces that with escrow addresses the protocol deploys itself.</li>
+      <li><b>Plans are opened by the operator</b>, because a proof shows that a transfer happened and nothing on chain shows who an address belongs to. That is a deliberate restriction, not an oversight: left open, the same gap lets anyone claim a busy address as their collector and bank a stranger's deposit.</li>
+      <li>The roadmap closes it with Attestcoin itself. An address proves it is yours by sending a marked transfer, which is proven the same way a payment is, so registration needs no operator and no permission.</li>
     </ul>
   </div>
 </section>
