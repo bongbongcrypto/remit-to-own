@@ -77,9 +77,19 @@ status flips, the payment joins the list. Caption:
 ## Prep checklist
 
 - A plan with unproven payments waiting, so the off to on transition happens live
-  on camera. `0xfe738d04cba29310772148d0324d0c82e8a82a6517211a91661be0977dbc79c1`
-  is already open, priced at 1,200 USDC with nothing paid, and shows as switched
-  off. Prove a payment into it while the page is on screen.
+  on camera. Use the **Sepolia** plan for this, because its payments are ours and
+  can be sent on demand rather than waiting for a stranger:
+
+  ```
+  # send an instalment, then wait about eight minutes for attestation
+  python send_payment.py --chainkey 1     --token 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238     --to <collector> --amount 3 --submit
+  ```
+
+  Plan `0x51d036c6767b3e58073e30d9f3c4cbf7703bbf53de4113e4f51e212bced5c803`
+  is the solar lantern, 12 USDC in four instalments of 3. Send one or two
+  instalments before recording, leave them unproven, and prove them on camera.
+  The collection address and the buyer live in `~/.rto-sepolia.env` on the build
+  server.
 - Price the plan high enough that one large transfer does not settle it
   immediately, or the arc collapses into a single step.
 - Faucet balance topped up. Each proof costs a fraction of a cent, so this is

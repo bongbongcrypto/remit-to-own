@@ -17,8 +17,16 @@ relative abroad (Ethereum)        relay (Python)              RemitToOwn (Solidi
 ```
 
 Source chains are Ethereum **Sepolia** (chainKey 1) and **mainnet** (chainKey 3),
-both attested on CC3 testnet. Mainnet's attested range starts at genesis, so any
-historical payment is provable.
+both attested on CC3 testnet and both in use here. Mainnet's attested range
+starts at genesis, so any historical transfer is provable; attestation trails the
+source chain tip by about forty blocks on either network.
+
+The two carry different jobs. Mainnet plans point at busy addresses nobody here
+controls, which puts the proof path in front of live traffic at no cost and is
+what surfaced the multi-token bug in section 5. The Sepolia plan is the opposite:
+the collection address, the buyer, and the payments are all ours, so the whole
+sequence from a relative sending money to a device switching on can be shown
+without waiting on a stranger. Neither alone would do.
 
 ## 2. Attestcoin integration
 
