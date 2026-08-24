@@ -605,17 +605,17 @@ let recordState = "ok";   // ok | partial | failed
 let lastPaintedState = null;
 let reqToken = 0;          // guards against out of order plan switches
 
+/* English unless somebody asks for otherwise. Guessing from the browser would
+   mean two readers of the same link see different pages, which is the wrong
+   trade for a page whose whole claim is that anyone can check the same facts.
+   The switcher is in the masthead and the choice is remembered. */
 function pickLang() {
-  /* a merchant hands a buyer a link, so the language can travel in the URL */
   const asked = new URLSearchParams(location.search).get("lang");
   if (asked && I18N[asked]) return asked;
-  let saved = null;
-  try { saved = localStorage.getItem("rto-lang"); } catch (e) { /* blocked */ }
-  if (saved && I18N[saved]) return saved;
-  const n = (navigator.language || "en").toLowerCase();
-  if (n.startsWith("ko")) return "ko";
-  if (n.startsWith("ja")) return "ja";
-  if (n.startsWith("zh")) return "zh";
+  try {
+    const saved = localStorage.getItem("rto-lang");
+    if (saved && I18N[saved]) return saved;
+  } catch (e) { /* storage blocked, fall through */ }
   return "en";
 }
 const T = k => I18N[lang][k];
