@@ -274,6 +274,9 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
 .verify dt { font-size:12.5px; color:var(--ink3); white-space:nowrap; }
 .verify dd { margin:0; font-family:var(--font-mono); font-size:12.5px;
   text-align:right; word-break:break-all; }
+/* a chain name is prose, not a hex string, so it keeps the body face */
+.verify dd.word { font-family:var(--font-body); font-size:13px;
+  word-break:normal; }
 .rec-list li.fresh { animation:slide .5s cubic-bezier(.22,.61,.36,1); }
 @keyframes slide { from { opacity:0; transform:translateY(-8px); } }
 
@@ -568,7 +571,9 @@ const NAMES = {
   "0xfe738d04cba29310772148d0324d0c82e8a82a6517211a91661be0977dbc79c1":
     { en:"Motorcycle, second hand", ko:"중고 오토바이", ja:"中古バイク", zh:"二手摩托车" },
   "0x51d036c6767b3e58073e30d9f3c4cbf7703bbf53de4113e4f51e212bced5c803":
-    { en:"Solar lantern", ko:"태양광 랜턴", ja:"ソーラーランタン", zh:"太阳能灯" }
+    { en:"Solar lantern", ko:"태양광 랜턴", ja:"ソーラーランタン", zh:"太阳能灯" },
+  "0xd221e0f424111cf15571bbea04012d2c319c9fc07b628e9455b22cc950cf68d2":
+    { en:"Solar lantern, second", ko:"태양광 랜턴 2호", ja:"ソーラーランタン 2台目", zh:"第二盏太阳能灯" }
 };
 
 /* ================================================================= config */
@@ -897,7 +902,8 @@ function renderVerify() {
       (current ? "<dt>" + esc(T("vPlan")) + "</dt><dd>" +
         link(EXPLORER + "/address/" + CONTRACT + "?tab=logs",
              current.id.slice(0, 6) + "…" + current.id.slice(-4)) + "</dd>" +
-        "<dt>" + esc(T("vChain")) + "</dt><dd>" + esc(chainName(current.chainKey)) + "</dd>" : "") +
+        "<dt>" + esc(T("vChain")) + '</dt><dd class="word">' +
+          esc(chainName(current.chainKey)) + "</dd>" : "") +
       "<dt>" + esc(T("vProof")) + "</dt><dd>0x…0FD2</dd>" +
     "</dl>";
 }

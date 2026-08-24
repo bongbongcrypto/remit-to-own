@@ -18,6 +18,7 @@ from pathlib import Path
 
 from eth_account import Account
 from web3 import Web3
+from web3.logs import DISCARD
 
 CC3_RPC = os.environ.get("CREDITCOIN_RPC_URL", "https://rpc.cc3-testnet.creditcoin.network")
 CC3_CHAIN_ID = 102031
@@ -162,12 +163,15 @@ def submit_payment(w3: Web3, rto, acct, chainkey: int, tx_hash: str) -> dict:
 
     out = {"cc3Tx": cc3_hash.hex(), "status": rcpt.status, "gasUsed": rcpt.gasUsed}
     if rcpt.status == 1:
-        for ev in rto.events.PaymentProven().process_receipt(rcpt):
+        # The receipt also carries the precompile's own logs, which this ABI
+        # cannot decode. Discard them rather than warning about each one, or the
+        # relay's output is unreadable on a recording.
+        for ev in rto.events.PaymentProven().process_receipt(rcpt, errors=DISCARD):
             a = ev["args"]
             out.update({
                 "planId": a["planId"].hex(), "payer": a["payer"],
                 "amount": a["amount"] / 1e6, "paidTotal": a["paidTotal"] / 1e6,
                 "activeUntil": a["activeUntil"],
             })
-        out["settled"] = len(rto.events.PlanSettled().process_receipt(rcpt)) > 0
+        out["settled"] = len(rto.events.PlanSettled().process_receipt(rcpt, errors=DISCARD)) > 0
     return out

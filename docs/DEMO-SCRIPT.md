@@ -85,11 +85,18 @@ status flips, the payment joins the list. Caption:
   python send_payment.py --chainkey 1     --token 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238     --to <collector> --amount 3 --submit
   ```
 
-  Plan `0x51d036c6767b3e58073e30d9f3c4cbf7703bbf53de4113e4f51e212bced5c803`
-  is the solar lantern, 12 USDC in four instalments of 3. Send one or two
-  instalments before recording, leave them unproven, and prove them on camera.
-  The collection address and the buyer live in `~/.rto-sepolia.env` on the build
-  server.
+  Plan `0xd221e0f424111cf15571bbea04012d2c319c9fc07b628e9455b22cc950cf68d2`
+  is reserved for this: a second solar lantern, 12 USDC in four instalments of
+  3, with nothing paid, so it reads **Not started**. Send one instalment to
+  `COLLECTOR2_ADDRESS`, wait about eight minutes for attestation, then prove it
+  while the page is on screen. The first lantern plan,
+  `0x51d036c6767b3e58073e30d9f3c4cbf7703bbf53de4113e4f51e212bced5c803`, is
+  already running on a proven payment and shows real history. Addresses and keys
+  live in `~/.rto-sepolia.env` on the build server, mode 0600.
+
+  Do not pre-send days in advance. `watch_plan` scans a window of recent blocks,
+  so a transfer left unproven for a day sits thousands of blocks back and the
+  scan will not reach it without a very large and very slow range.
 - Price the plan high enough that one large transfer does not settle it
   immediately, or the arc collapses into a single step.
 - Faucet balance topped up. Each proof costs a fraction of a cent, so this is
