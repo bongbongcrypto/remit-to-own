@@ -1,8 +1,8 @@
 {
-  "name": "attested-threat-oracle-contracts",
+  "name": "remit-to-own-contracts",
   "version": "0.1.0",
   "private": true,
-  "description": "On-chain threat registry built on the Attestcoin Protocol (Creditcoin CC3)",
+  "description": "Pay-as-you-go device financing proven across chains with the Attestcoin Protocol (Creditcoin CC3)",
   "license": "MIT",
   "dependencies": {
     "@gluwa/usc-contracts": "0.1.2",
