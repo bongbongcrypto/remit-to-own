@@ -105,7 +105,7 @@ def check_strings(d):
 def check_files():
     """Judge-facing prose gets the monologue and punctuation checks too."""
     problems = []
-    for rel in ["docs/deck.html", "README.md", "docs/DEMO-SCRIPT.md"]:
+    for rel in ["docs/deck.html", "README.md", "CLAUDE.md"]:
         path = os.path.join(ROOT, rel)
         if not os.path.exists(path):
             continue
@@ -129,7 +129,7 @@ def main():
             print("  " + p)
         return 1
     n = len(set(d["en"]) - {"_name", "_locale"})
-    print("copy check passed: %d strings x %d languages, plus deck, README and demo script"
+    print("copy check passed: %d strings x %d languages, plus deck, README and CLAUDE.md"
           % (n, len(d)))
     return 0
 

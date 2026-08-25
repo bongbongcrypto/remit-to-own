@@ -53,3 +53,7 @@ Thumbs.db
 
 # Project artifacts
 .last-sync
+
+# Internal production notes live in the master contest folder, not here
+PROGRESS.md
+docs/DEMO-SCRIPT.md

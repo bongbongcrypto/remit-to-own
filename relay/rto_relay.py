@@ -89,7 +89,7 @@ def fetch_proof(chainkey: int, tx_hash: str) -> dict:
 
 
 def load_wallet():
-    wallet_env = Path(os.environ.get("WALLET_ENV", str(Path.home() / ".ato-wallet.env")))
+    wallet_env = Path(os.environ.get("WALLET_ENV", str(Path.home() / ".remit-to-own.env")))
     key = None
     for line in wallet_env.read_text().splitlines():
         line = line.strip()

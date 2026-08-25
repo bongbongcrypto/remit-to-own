@@ -22,7 +22,7 @@ proves.
   Japanese, Chinese, English.
 - `bot/` optional Telegram interface to the same state. The web page needs no
   token and no backend, so nothing depends on it.
-- `docs/` technical documentation, security review, deck, demo script.
+- `docs/` technical documentation, security review, deck.
 
 ## Rules that matter here
 

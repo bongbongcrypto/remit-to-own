@@ -170,7 +170,7 @@ cd contracts
 yarn install                       # @gluwa/usc-contracts, @openzeppelin/contracts (pinned)
 forge install foundry-rs/forge-std
 forge build                        # solc 0.8.30, shanghai
-WALLET_ENV=~/.ato-wallet.env bash scripts/deploy.sh
+WALLET_ENV=~/.remit-to-own.env bash scripts/deploy.sh
 ```
 
 Live deployment (`contracts/deployments/cc3-testnet.json`):

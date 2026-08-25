@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Deploy EvmV1Decoder + RemitToOwn to Creditcoin CC3 testnet.
 # The private key is read from an external file (never committed, never printed).
-#   Usage: WALLET_ENV=~/.ato-wallet.env bash scripts/deploy.sh
+#   Usage: WALLET_ENV=~/.remit-to-own.env bash scripts/deploy.sh
 set -euo pipefail
 
-WALLET_ENV="${WALLET_ENV:-$HOME/.ato-wallet.env}"
+WALLET_ENV="${WALLET_ENV:-$HOME/.remit-to-own.env}"
 RPC="${CREDITCOIN_RPC_URL:-https://rpc.cc3-testnet.creditcoin.network}"
 DECODER_PATH="node_modules/@gluwa/usc-contracts/contracts/decoding/EvmV1Decoder.sol:EvmV1Decoder"
 OUT_DIR="deployments"

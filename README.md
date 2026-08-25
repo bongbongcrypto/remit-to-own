@@ -135,7 +135,7 @@ rejected on-chain.
 ```bash
 # contracts
 cd contracts && yarn install && forge install foundry-rs/forge-std && forge test
-WALLET_ENV=~/.ato-wallet.env bash scripts/deploy.sh
+WALLET_ENV=~/.remit-to-own.env bash scripts/deploy.sh
 
 # accept a stablecoin, then open a plan
 cast send <contract> "setTrustedToken(uint64,address,bool)" 3 <usdc> true ...
