@@ -11,7 +11,7 @@ the world keeps working, with nobody in the middle deciding whether it did.**
 Everything below runs on the build server. Nothing is signed on a workstation.
 
 **1. Send the payment that will go live on camera.** The second Sepolia lantern
-is reserved for this. It is open at 12 USDC in four instalments of 3, with
+is reserved for this. It is open at 12 USDC in four installments of 3, with
 nothing paid, so the page reads **Not started**.
 
 ```bash
@@ -83,7 +83,7 @@ cast call 0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223 "isActive(bytes32)(bool)" 0
 Caption: "The merchant reads one boolean. That is the whole integration."
 
 **2:05 Paid off.** Switch to the motorcycle plan. Every one of the twelve
-instalment blocks is filled, the balance is zero, and the address to pay into is
+installment blocks is filled, the balance is zero, and the address to pay into is
 gone because there is nothing left to pay. Caption:
 
 > When the price is covered, the buyer owns it outright and it never locks again.

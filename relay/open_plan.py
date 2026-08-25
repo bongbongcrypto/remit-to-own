@@ -59,8 +59,8 @@ def main():
     ap.add_argument("--collector", required=True, help="this plan's own collection address")
     ap.add_argument("--buyer", required=True, help="the household that owns it once paid off")
     ap.add_argument("--price", type=float, required=True, help="full price, whole units")
-    ap.add_argument("--installment", type=float, required=True, help="one instalment, whole units")
-    ap.add_argument("--days", type=int, default=30, help="days of service one instalment buys")
+    ap.add_argument("--installment", type=float, required=True, help="one installment, whole units")
+    ap.add_argument("--days", type=int, default=30, help="days of service one installment buys")
     ap.add_argument("--trust", action="store_true", help="also accept this token on this chain")
     ap.add_argument("--submit", action="store_true", help="send, rather than print the plan")
     args = ap.parse_args()
@@ -69,9 +69,9 @@ def main():
     price = int(round(args.price * 10 ** DECIMALS))
     inst = int(round(args.installment * 10 ** DECIMALS))
     if inst <= 0 or price <= 0:
-        raise SystemExit("price and instalment must be positive")
+        raise SystemExit("price and installment must be positive")
     if inst > price:
-        raise SystemExit("an instalment cannot be larger than the price")
+        raise SystemExit("an installment cannot be larger than the price")
 
     w3 = R.make_web3()
     rto = R.get_contract(w3)
@@ -85,8 +85,8 @@ def main():
     print(f"token      : {token}")
     print(f"collector  : {collector}")
     print(f"buyer      : {buyer}")
-    print(f"price      : {args.price:,.2f}  instalment {args.installment:,.2f} buys {args.days} days"
-          f"  ({price // inst} instalments)")
+    print(f"price      : {args.price:,.2f}  installment {args.installment:,.2f} buys {args.days} days"
+          f"  ({price // inst} installments)")
 
     if rto.functions.plans(pid).call()[10]:
         raise SystemExit("that plan already exists")

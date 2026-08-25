@@ -73,17 +73,18 @@ header { border-bottom:1px solid var(--rule); background:var(--card); }
 .mast { max-width:1080px; margin:0 auto; padding:30px 28px 34px;
   display:flex; flex-wrap:wrap; gap:20px 32px; align-items:flex-start;
   justify-content:space-between; }
-.brand { display:flex; flex-direction:column; gap:12px; flex:1 1 34ch;
+.brand { display:flex; flex-direction:column; gap:12px; flex:1 1 44ch;
   min-width:min(100%,30ch); }
 .wordmark { font-size:17px; font-weight:600; letter-spacing:.015em; line-height:1;
   display:flex; align-items:center; gap:9px; color:var(--ink2); }
 .wordmark .dot { width:9px; height:9px; border-radius:50%; background:var(--accent);
   flex:none; }
-.tagline { color:var(--ink); font-size:26px; font-weight:600;
-  letter-spacing:-.021em; line-height:1.28; max-width:26ch; margin:0;
+.tagline { color:var(--ink); font-size:25px; font-weight:600;
+  letter-spacing:-.021em; line-height:1.3; max-width:40ch; margin:0;
   text-wrap:balance; }
+/* a CJK glyph is about twice the width the ch unit measures */
 html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
-  font-size:24px; line-height:1.42; max-width:24ch; }
+  font-size:23px; line-height:1.46; max-width:27ch; }
 
 .langs { display:flex; gap:2px; padding:3px; background:var(--sunk);
   border:1px solid var(--rule); border-radius:9px; flex:none; }
@@ -160,7 +161,7 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
   background:var(--ink3); opacity:.6; flex:none; }
 
 /* Installments, not a percentage. Field research is blunt about this: buyers
-   judge these purchases by the size of one instalment, and the thing they can
+   judge these purchases by the size of one installment, and the thing they can
    never find out is how many are left. So the track is countable. */
 .track { display:flex; gap:2px; height:15px; }
 .track .seg { flex:1 1 0; border-radius:2px; background:var(--sunk);
@@ -179,7 +180,7 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
   overflow:hidden; }
 @media (max-width:600px) {
   .facts { grid-template-columns:repeat(2,1fr); }
-  /* keep the instalment blocks countable when the column narrows */
+  /* keep the installment blocks countable when the column narrows */
   .track { gap:1px; height:13px; }
   .track .seg { border-radius:1px; min-width:2px; }
 }
@@ -208,7 +209,7 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
 
 /* Paid off keeps the same card as every other state. Inverting the whole
    surface read as a different page rather than a finished plan, and the content
-   already says it plainly: the pill, a balance of zero, every instalment block
+   already says it plainly: the pill, a balance of zero, every installment block
    filled, and no address left to pay. Only the edge changes. */
 .panel[data-owned="1"] { border-color:var(--accent); }
 
@@ -330,13 +331,13 @@ footer .mono { font-size:12px; }
 const I18N = {
   en: {
     _name:"English", _locale:"en-GB",
-    tagline:"A relative abroad pays. The device here keeps working.",
+    tagline:"A relative abroad pays the installments. The device works until it is yours.",
     s1t:"A relative sends USDC",
     s1b:"On Ethereum, to this plan's own collection address. No memo, no account number, no agent in the middle.",
     s2t:"Creditcoin checks it really happened",
     s2b:"An Attestcoin proof is verified on chain by a precompile. No company confirms the payment, and none can deny it.",
-    s3t:"The device works for the days you bought",
-    s3b:"Send more and it works longer. Cover the full price and the buyer owns it outright.",
+    s3t:"Pay it off and it is yours",
+    s3b:"Each payment buys days of use. Cover the full price and the buyer owns it outright, with nothing left to pay and nothing that can lock it.",
     on:"Working", off:"Locked", owned:"Owned outright",
     subOn:"Paid up until {date}.",
     subOff:"Locked since {date}. It unlocks the moment a payment is proven.",
@@ -380,13 +381,13 @@ const I18N = {
   },
   ko: {
     _name:"한국어", _locale:"ko-KR",
-    tagline:"해외에 있는 가족이 돈을 보내면 이곳의 기계가 계속 돌아갑니다.",
+    tagline:"해외 가족이 할부금을 냅니다. 낸 만큼 쓰다가, 다 갚으면 내 것이 됩니다.",
     s1t:"가족이 USDC를 보냅니다",
     s1b:"이더리움에서 이 플랜 전용 수금 주소로 보냅니다. 메모도 계좌번호도 중간에 낀 대리인도 필요 없습니다.",
     s2t:"크레딧코인이 실제로 들어왔는지 확인합니다",
     s2b:"Attestcoin 증명을 프리컴파일이 체인 위에서 검증합니다. 어느 회사도 입금을 확인해 주지 않고, 부인할 수도 없습니다.",
-    s3t:"보낸 만큼 기계가 돌아갑니다",
-    s3b:"많이 보내면 더 오래 돌아갑니다. 가격을 다 채우면 완전히 구매자의 것이 됩니다.",
+    s3t:"다 갚으면 내 것이 됩니다",
+    s3b:"낸 만큼 쓸 수 있는 날짜가 늘어납니다. 가격을 다 채우면 구매자 것이 되고, 더 낼 것도 잠길 일도 없습니다.",
     on:"작동 중", off:"정지됨", owned:"소유 완료",
     subOn:"{date}까지 사용료가 채워져 있습니다.",
     subOff:"{date}에 멈췄습니다. 입금이 증명되는 즉시 다시 돌아갑니다.",
@@ -430,13 +431,13 @@ const I18N = {
   },
   ja: {
     _name:"日本語", _locale:"ja-JP",
-    tagline:"海外の家族が支払い、ここにある機械は動き続けます。",
+    tagline:"海外の家族が分割払いを払います。払った分だけ使えて、払い終えれば自分のものです。",
     s1t:"家族が USDC を送ります",
     s1b:"イーサリアム上で、このプラン専用の受取アドレスに送ります。メモも口座番号も仲介する代理人も要りません。",
     s2t:"Creditcoin が着金を確認します",
     s2b:"Attestcoin の証明をプリコンパイルがチェーン上で検証します。どの企業も着金を承認せず、否認もできません。",
-    s3t:"支払った分だけ機械が動きます",
-    s3b:"多く送れば長く動きます。価格を満たせば購入者のものになります。",
+    s3t:"払い終えれば自分のものです",
+    s3b:"払った分だけ使える日数が増えます。価格を満たせば購入者のものになり、残額もロックもなくなります。",
     on:"稼働中", off:"停止中", owned:"所有済み",
     subOn:"{date} まで利用料が入っています。",
     subOff:"{date} に停止しました。入金が証明され次第すぐ再開します。",
@@ -480,13 +481,13 @@ const I18N = {
   },
   zh: {
     _name:"中文", _locale:"zh-CN",
-    tagline:"海外的家人付款，这里的机器持续运转。",
+    tagline:"海外的家人替你付分期。付多少用多少，付清之后就归你。",
     s1t:"家人发送 USDC",
     s1b:"在以太坊上发送到该计划专属的收款地址。不需要备注、账号，也不需要中间代理人。",
     s2t:"Creditcoin 验证款项确实到账",
     s2b:"Attestcoin 证明由预编译合约在链上验证。没有公司确认这笔付款，也没有公司能否认它。",
-    s3t:"付多少，机器就运转多久",
-    s3b:"付得越多运转越久。付满全价，机器就完全归购买者所有。",
+    s3t:"付清之后就归你",
+    s3b:"每一笔付款都换来可用的天数。付满全价，机器就归购买者所有，不再有余额，也不会再锁定。",
     on:"运转中", off:"已停机", owned:"已归属",
     subOn:"使用期已付至 {date}。",
     subOff:"已于 {date} 停机。付款一经证明立即恢复。",
@@ -565,7 +566,7 @@ const DECIMALS = 6, SYMBOL = "USDC";
    indexer and only the live tail is polled from the node. */
 const TAIL_BLOCKS = 1200, POLL_MS = 12000, MAX_SCAN = 20000;
 /* MAX_DAYS_PER_INSTALLMENT in the contract is 3650, and a payment can cover
-   many instalments, so this only has to be past anything real. */
+   many installments, so this only has to be past anything real. */
 const MAX_DAYS = 3650000;
 
 /* ================================================================== state */
@@ -883,7 +884,7 @@ function renderVerify() {
     "</dl>";
 }
 
-/* One block per instalment while that stays countable, so the reader can see
+/* One block per installment while that stays countable, so the reader can see
    how many are left instead of decoding a percentage. */
 function track(done, total, pct) {
   const n = Math.round(total);

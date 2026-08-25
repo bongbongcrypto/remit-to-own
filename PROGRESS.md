@@ -32,7 +32,7 @@ default to chase.
   no token and no backend.
 - **2026-08-23. The page follows the off-grid financing industry's own
   disclosure rules** (GOGLA, CGAP, 60 Decibels) rather than dashboard instinct.
-  Balance owed is the headline, progress is counted in instalments, and a
+  Balance owed is the headline, progress is counted in installments, and a
   switched-off device is amber and never red. Reasoning in `docs/TECHNICAL.md`
   2.4; do not restyle those without reading it.
 - **2026-08-23. History from the indexer, live tail from the node.** The CC3 node
@@ -62,7 +62,7 @@ default to chase.
   as fine, which is how that got found.
 - ✅ Relay and plan watcher, multi endpoint failover, signing only on the build
   server.
-- ✅ Device page rebuilt: self discovering plans, instalment progress, payment
+- ✅ Device page rebuilt: self discovering plans, installment progress, payment
   record with running balances, live alerts, Korean, Japanese, Chinese, English,
   WCAG AA verified in light and dark, every state.
 - ✅ Adversarial QA on the page, relay and bot (2026-08-23). Thirteen defects
@@ -83,7 +83,7 @@ default to chase.
   `docs/deck.pdf`.
 - 📋 **Record the demo video.** Follow `docs/DEMO-SCRIPT.md`. Use the second
   Sepolia lantern, `0xd221e0f4…68d2`, which is open at 12 USDC with nothing paid
-  and reads Not started. Send one instalment, wait about eight minutes for
+  and reads Not started. Send one installment, wait about eight minutes for
   attestation, then prove it on camera. Do not send days ahead: the scan covers
   a window of recent blocks only. Completion criterion: a video of about 2.5
   minutes, no personal account visible in any frame, showing the off to on

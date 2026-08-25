@@ -136,9 +136,9 @@ Decibels' 2024 off-grid survey (n=79,000+).
   repeated complaint in the CGAP interviews is that customers know what they
   have paid and never learn what is left, which also blocks them from clearing
   the balance when a lump sum arrives.
-- **Progress is counted in instalments, not percent.** Buyers judge these
-  purchases by the size of one instalment, so the track is one block per
-  instalment and the reader can count what remains.
+- **Progress is counted in installments, not percent.** Buyers judge these
+  purchases by the size of one installment, so the track is one block per
+  installment and the reader can count what remains.
 - **Switching off is amber, never red.** CGAP found that spending a few days in
   the dark is a deliberate budgeting move, and that providers who treated it as
   delinquency lost the customer. The page states the fact and the remedy without
@@ -211,8 +211,8 @@ delinquency, collateral, liquidation, credit scoring. Nothing is lent, so nothin
 must be recovered.
 
 Also not defended, and this one is a judgement call rather than a design
-consequence: `openPlan` does not require the instalment to be smaller than the
-price. An operator who set an instalment of one unit against a large price would
+consequence: `openPlan` does not require the installment to be smaller than the
+price. An operator who set an installment of one unit against a large price would
 buy a service term that saturates at `uint64` max, which is a nonsense plan but
 not an exploitable one, since issuing plans is an admin action and the money at
 risk is the operator's own. The guard is one line and belongs in the next

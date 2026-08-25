@@ -54,7 +54,7 @@ cast call 0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223 \
 ```
 
 Or serve `web/` and open it in a browser. The page finds every plan on the
-contract by itself, shows what is left to pay, how many instalments remain, and
+contract by itself, shows what is left to pay, how many installments remain, and
 where to send money, and it announces a payment the moment one is proven. Korean,
 Japanese, Chinese and English.
 
