@@ -35,6 +35,12 @@ proves.
 - Every audit finding keeps a regression test. Do not delete one to make a build
   pass.
 - English for code, docs, and commits.
+- **Run `python scripts/check-copy.py` after touching any wording.** Behaviour had
+  thirty-eight tests and the words had none, so copy written while the
+  implementation was still in mind kept shipping: source vocabulary on a buyer's
+  screen, a string that read out an internal clamp, and sentences arguing with
+  designs nobody proposed. The strings live in `web/strings.reference.json`; the
+  page is regenerated from it, never edited string by string.
 - The page layout follows the off-grid financing industry's own disclosure rules
   (GOGLA, CGAP, 60 Decibels). The reasoning is in `docs/TECHNICAL.md` 2.4. Do not
   restyle balance, lock, or switched-off states without reading it: switched off

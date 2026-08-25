@@ -37,10 +37,9 @@ snapshot and the chain is the record.
 
 The two chains do different jobs. The **Sepolia** lantern is ours from the
 collection address to the payment, so the whole sequence can be run on demand.
-The **mainnet** plans point at busy addresses nobody here controls, which put the
-proof path in front of live traffic at no cost and is what surfaced the
-multi-token bug in `docs/TECHNICAL.md` section 5. Transfers written for a demo
-would never have produced it.
+The **mainnet** plans point at busy addresses nobody here controls, which runs
+the proof path against live traffic at no cost. That is where the multi-token
+bug in `docs/TECHNICAL.md` section 5 came from.
 
 Contract: [`0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223`](https://creditcoin-testnet.blockscout.com/address/0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223)
 
@@ -159,10 +158,10 @@ CC3 testnet, so live mainnet transfers are provable at no cost.
 - For the demo, plans are opened against **live mainnet addresses that already
   receive USDC**, so that genuine, independently generated transfers drive the
   system. The proofs and the state changes are real; the payers are strangers
-  moving money through DeFi rather than customers buying a truck. Aiming the
-  pipeline at live traffic is what surfaced the multi-token bug in section 5 of
-  `docs/TECHNICAL.md`, which transfers written for the demo would never have
-  produced. A merchant in production generates a fresh collection address per plan.
+  moving money through DeFi rather than customers buying a truck. Running the
+  pipeline against live traffic is where the multi-token bug in section 5 of
+  `docs/TECHNICAL.md` came from. A merchant in production generates a fresh
+  collection address per plan.
 - **Plans are opened by the operator.** A proof shows that a transfer happened;
   nothing on chain shows who an address belongs to. That restriction is
   deliberate, and it is the fix for the critical audit finding: left open, the
