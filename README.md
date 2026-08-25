@@ -18,16 +18,29 @@ device stays switched on for the days that payment bought.
 
 ---
 
-## It already works (CC3 testnet, 2026-08-22)
+## It already works (CC3 testnet, snapshot 2026-08-25)
 
-Every plan below was driven by **real Ethereum mainnet USDC transfers**, each
-proven on Creditcoin through the BlockProver precompile.
+Eight plans, fourteen proven payments, across **both source chains Attestcoin
+attests**. The page reads all of it from the contract, so this table is a
+snapshot and the chain is the record.
 
-| Plan | What happened | State |
-|---|---|---|
-| Delivery truck, 50,000 USDC | 23.48, then 1,490.71, then 97.47, then 107.41 USDC proven | **Running, 25 days bought so far** |
-| Motorcycle, 1,800 USDC | 89.42 USDC, then the balance | **Off, then running, then owned outright** |
-| Solar home system, 800 USDC | real payments proven | **Paid off, owned outright** |
+| Plan | Source | Payments proven | State |
+|---|---|---|---|
+| Solar lantern, 12 USDC | Sepolia | 3.00 | Running until 23 Sept |
+| Solar lantern, 12 USDC | Sepolia | none yet | Not started |
+| Delivery truck, 80,000 USDC | mainnet | 342.59, 1,500.00, 599.68 | Running until 28 Sept |
+| Delivery truck, 50,000 USDC | mainnet | 23.48, 1,490.71, 97.47, 107.41, 1,946.58 | Running until 16 Oct |
+| Cargo tricycle, 5,000 USDC | mainnet | 326.19, then the balance | Owned outright |
+| Motorcycle, 1,800 USDC | mainnet | 89.42, then the balance | Owned outright |
+| Solar home system, 800 USDC | mainnet | one transfer, capped at the balance | Owned outright |
+| Motorcycle second hand, 1,200 USDC | mainnet | none yet | Not started |
+
+The two chains do different jobs. The **Sepolia** lantern is ours from the
+collection address to the payment, so the whole sequence can be run on demand.
+The **mainnet** plans point at busy addresses nobody here controls, which put the
+proof path in front of live traffic at no cost and is what surfaced the
+multi-token bug in `docs/TECHNICAL.md` section 5. Transfers written for a demo
+would never have produced it.
 
 Contract: [`0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223`](https://creditcoin-testnet.blockscout.com/address/0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223)
 

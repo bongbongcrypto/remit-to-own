@@ -1,6 +1,6 @@
 # PROGRESS
 
-Last updated 2026-08-23.
+Last updated 2026-08-25.
 
 ## Goal
 
@@ -38,6 +38,13 @@ default to chase.
 - **2026-08-23. History from the indexer, live tail from the node.** The CC3 node
   caps `eth_getLogs` at a ten second query and serialises parallel chunks, so
   scanning history over RPC cannot work. Blockscout answers it in one request.
+- **2026-08-24. Submit in English, gloss it in Korean.** The announcement, rules,
+  form fields and Discord are all English, and one judge who cannot read Korean
+  is a loss with no matching gain. The page offering four languages is a product
+  feature, not the submission language.
+- **2026-08-25. A paid-off plan keeps the same card.** Inverting the surface was
+  meant to mark the moment; the first person to see it read it as a different
+  page. The content already says it, so only the card edge changes now.
 
 ## Progress
 
@@ -45,8 +52,14 @@ default to chase.
   linked decoder `0x21f3e26A827F2e89c0F99B46da033F4b05D57fd8`.
 - ✅ 38 Foundry tests passing: 23 behaviour, 15 audit regression, one per attack.
 - ✅ Adversarial audit run, ten findings closed, each with a regression test.
-- ✅ End to end proven live with real Ethereum mainnet USDC. Six plans, thirteen
-  proven payments, three paid off.
+- ✅ End to end proven on **both source chains**. Eight plans, fourteen proven
+  payments, three paid off. The Sepolia lantern is ours from the collection
+  address to the payment, so the off to on sequence runs on demand; the mainnet
+  plans meet live traffic, which is what surfaced the multi-token bug.
+- ✅ `relay/open_plan.py` and `relay/send_payment.py`. Both estimate gas rather
+  than guess it, and a receipt with a status other than one raises instead of
+  printing success. The first run of open_plan reverted twice and reported both
+  as fine, which is how that got found.
 - ✅ Relay and plan watcher, multi endpoint failover, signing only on the build
   server.
 - ✅ Device page rebuilt: self discovering plans, instalment progress, payment
@@ -68,12 +81,17 @@ default to chase.
 - ✅ Docs current: `README.md`, `docs/TECHNICAL.md`, `docs/SECURITY.md`,
   `docs/DEMO-SCRIPT.md`, `docs/deck.html` and a regenerated ten slide
   `docs/deck.pdf`.
-- 📋 **Record the demo video.** Follow `docs/DEMO-SCRIPT.md`. Plan
-  `0xfe738d04…c79c1` is open at 1,200 USDC with nothing paid and shows as
-  switched off, so the off to on transition can happen live on camera.
-  Completion criterion: a video of about 2.5 minutes, no personal account
-  visible in any frame, showing the off to on transition and the alert arriving
-  on its own.
+- 📋 **Record the demo video.** Follow `docs/DEMO-SCRIPT.md`. Use the second
+  Sepolia lantern, `0xd221e0f4…68d2`, which is open at 12 USDC with nothing paid
+  and reads Not started. Send one instalment, wait about eight minutes for
+  attestation, then prove it on camera. Do not send days ahead: the scan covers
+  a window of recent blocks only. Completion criterion: a video of about 2.5
+  minutes, no personal account visible in any frame, showing the off to on
+  transition and the alert arriving on its own.
+- 📋 **Korean gloss for anything submitted.** The deck is glossed in
+  `contests/2026-creditcoin-hackathon/DECK-KO.md`. Do the same for the DoraHacks
+  form answers before they are submitted: owner cannot put their name to text
+  they cannot read.
 - 📋 **Submit on DoraHacks.** Completion criterion: submission accepted before
   2026-09-06, with the repo, video and deck attached. Real name and nationality
   go to the organiser privately and never into anything public.
