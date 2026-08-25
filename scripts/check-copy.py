@@ -102,12 +102,19 @@ def check_strings(d):
     return problems
 
 
-def check_files():
-    """Judge-facing prose gets the monologue and punctuation checks too."""
+def check_files(extra=()):
+    """Judge-facing prose gets the monologue and punctuation checks too.
+
+    Extra paths can be passed on the command line, so submission text that lives
+    outside this repository is held to the same rules.
+    """
     problems = []
-    for rel in ["docs/deck.html", "README.md", "CLAUDE.md"]:
-        path = os.path.join(ROOT, rel)
+    paths = [os.path.join(ROOT, r) for r in ("docs/deck.html", "README.md", "CLAUDE.md")]
+    paths += list(extra)
+    for path in paths:
+        rel = os.path.basename(path)
         if not os.path.exists(path):
+            problems.append("%s does not exist" % path)
             continue
         s = io.open(path, encoding="utf-8").read()
         for w in MONOLOGUE:
@@ -122,7 +129,7 @@ def check_files():
 
 def main():
     d = load()
-    problems = check_strings(d) + check_files()
+    problems = check_strings(d) + check_files(sys.argv[1:])
     if problems:
         print("copy check failed, %d finding(s):" % len(problems))
         for p in problems:
