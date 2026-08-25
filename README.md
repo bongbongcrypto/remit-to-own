@@ -12,9 +12,9 @@ operators and local agents who each take a cut and each have to be trusted.
 Remit-to-Own closes it with proof. Each plan gets a dedicated collection address
 on Ethereum. A relative anywhere sends stablecoins there. The Attestcoin
 Protocol proves that transfer to Creditcoin, the plan credits itself, and the
-device stays switched on for the days that payment bought.
+device stays unlocked for the days that payment bought.
 
-**Pay more, it runs longer. Stop paying, it stops. Cover the price, it is yours.**
+**Pay more, it works longer. Stop paying, it locks. Cover the price, you own it outright.**
 
 ---
 

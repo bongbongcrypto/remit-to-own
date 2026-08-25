@@ -2,7 +2,7 @@
 
 Watches a plan's collection address on the source chain, proves each incoming
 stablecoin transfer with the Attestcoin Protocol, and credits the plan on
-Creditcoin so the device stays switched on.
+Creditcoin so the device stays unlocked.
 
     python watch_plan.py --plan 0x<planId> --chainkey 3 --blocks 60 --submit
 

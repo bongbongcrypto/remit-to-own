@@ -2,7 +2,7 @@
 """Remit-to-Own Telegram bot.
 
 The buyer's side of the product. It tells you the moment a relative's payment is
-proven on Creditcoin, how much longer the device runs, and when it becomes yours.
+proven on Creditcoin, how much longer the device works, and when it becomes yours.
 
     BOT_TOKEN=<from @BotFather> python device_bot.py
 
@@ -69,19 +69,19 @@ def fmt_device(plan_hex: str) -> str:
     pct = paid * 100 / price
     if settled:
         head = "🎉 <b>Paid off. The device is yours.</b>"
-        line = "It never switches off again."
+        line = "It never locks again."
     elif active:
         left = rto.functions.timeRemaining(plan_id).call()
         until = R.fmt_until(active_until, "%d %b %Y")
-        head = "🟢 <b>Device running</b>"
-        line = (f"Runs {R.fmt_days(left)} more (until {until})." if until
-                else f"Runs {R.fmt_days(left)} more.")
+        head = "🟢 <b>Device working</b>"
+        line = (f"Working for {R.fmt_days(left)} more (until {until})." if until
+                else f"Working for {R.fmt_days(left)} more.")
     elif active_until == 0:
         head = "⚪ <b>Not started yet</b>"
-        line = "It runs as soon as the first payment is proven."
+        line = "It unlocks as soon as the first payment is proven."
     else:
-        head = "🔴 <b>Device switched off</b>"
-        line = "A payment switches it straight back on."
+        head = "🔴 <b>Device locked</b>"
+        line = "A payment unlocks it straight away."
 
     return (f"{head}\n{line}\n\n"
             f"Paid: <b>{usdc(paid)}</b> of {usdc(price)} USDC ({pct:.1f}%)\n"
@@ -155,7 +155,7 @@ def poll_alerts(state):
             ev = rto.events.PaymentProven().process_log(lg)
             a = ev["args"]
             until = R.fmt_until(a["activeUntil"], "%d %b %Y")
-            runs = f"Device runs until {until}." if until else "Device is running."
+            runs = f"Working until {until}." if until else "Device is working."
             text = (f"💸 <b>Payment proven</b>\n"
                     f"{usdc(a['amount'])} USDC arrived from Ethereum.\n"
                     f"{runs}\n"

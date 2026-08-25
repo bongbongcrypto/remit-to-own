@@ -19,7 +19,7 @@ import {EvmV1Decoder} from "@gluwa/usc-contracts/contracts/decoding/EvmV1Decoder
 ///         dedicated collection address on the source chain. A relative anywhere
 ///         sends a stablecoin there; the Attestcoin Protocol proves that
 ///         transfer to Creditcoin; the plan credits itself and the device stays
-///         switched on for the days that payment bought. Pay more, it runs
+///         unlocked for the days that payment bought. Pay more, it works
 ///         longer. Stop paying, it simply stops. When the total is covered,
 ///         ownership transfers.
 ///
@@ -304,7 +304,7 @@ contract RemitToOwn is USCBase {
         if (!p.settled && p.paid >= p.priceTotal) {
             p.settled = true;
             // Once the price is covered the device is the buyer's outright and
-            // never switches off again.
+            // never locks again.
             p.activeUntil = type(uint64).max;
             emit PlanSettled(planId, p.buyer, p.paid);
         }

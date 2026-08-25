@@ -1,7 +1,7 @@
 # Remit-to-Own
 
 Pay-as-you-go device financing where a relative abroad pays on Ethereum and the
-device on Creditcoin stays switched on. Submission for BUIDL CTC 2026 Fall.
+device on Creditcoin stays unlocked. Submission for BUIDL CTC 2026 Fall.
 
 ## The one idea
 

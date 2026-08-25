@@ -72,7 +72,7 @@ send small sums, and rounding a payment down to zero days would quietly eat it.
 Paying early stacks time onto what is left rather than wasting it; paying after a
 lapse restarts from now with no penalty. The addition saturates instead of
 wrapping. When `paid` reaches `priceTotal` the plan settles and `activeUntil`
-becomes `type(uint64).max`, so an owned device never switches off again.
+becomes `type(uint64).max`, so an owned device never locks again.
 
 ### 2.3 The relay
 
@@ -203,7 +203,7 @@ regression test in `test/RemitToOwnAudit.t.sol`.
 | Credit a transfer where sender and recipient are the same address | Refused; no money moved |
 | Keep paying a settled plan and have the money silently vanish | Settled plans stop accepting payments |
 | Open a plan with `planId` zero, breaking collector uniqueness | Rejected |
-| Overflow the service term so the device switches off | Service term capped, arithmetic saturates |
+| Overflow the service term so the device locks | Service term capped, arithmetic saturates |
 | Anyone setting accepted tokens, or burning admin | `onlyAdmin`, and admin cannot be set to the zero address |
 
 Deliberately **not** defended, because the design does not need it: default,

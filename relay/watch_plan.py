@@ -5,7 +5,7 @@
 
 Reads the plan's collector straight from the contract, scans the source chain
 for stablecoin transfers into it, and (with --submit) proves each one so the
-device on Creditcoin stays switched on.
+device on Creditcoin stays unlocked.
 """
 import argparse
 import json
@@ -80,18 +80,18 @@ def show(rto, plan_id: bytes):
     left = rto.functions.timeRemaining(plan_id).call()
     due = rto.functions.amountRemaining(plan_id).call()
     if settled:
-        print(f"  device=OWNED  paid={paid/1e6:,.2f}/{price/1e6:,.2f} USDC  "
-              f"owned outright, never switches off")
+        print(f"  device=OWNED    paid={paid/1e6:,.2f}/{price/1e6:,.2f} USDC  "
+              f"owned outright, never locks again")
         return
     money = f"paid={paid/1e6:,.2f}/{price/1e6:,.2f} USDC  due={due/1e6:,.2f}"
     if active:
         until = R.fmt_until(active_until)
-        term = f"runs {R.fmt_days(left)} (until {until})" if until else "runs indefinitely"
-        print(f"  device=ON   {money}  {term}")
+        term = f"{R.fmt_days(left)} left (until {until})" if until else "no end date"
+        print(f"  device=WORKING  {money}  {term}")
     elif active_until == 0:
-        print(f"  device=OFF  {money}  not started, no payment proven yet")
+        print(f"  device=LOCKED   {money}  not started, no payment proven yet")
     else:
-        print(f"  device=OFF  {money}  lapsed, a proven payment starts it again")
+        print(f"  device=LOCKED   {money}  a proven payment unlocks it again")
 
 
 def main():

@@ -9,7 +9,7 @@ solo. Submission closes 2026-09-06, results 2026-09-18.
 
 Remit-to-Own is pay-as-you-go device financing across two chains. A relative
 abroad sends USDC on Ethereum, the Attestcoin Protocol proves that payment to
-Creditcoin, and the machine at home runs for the time that payment bought. Cover
+Creditcoin, and the device at home stays unlocked for the days that payment bought. Cover
 the price and it belongs to the buyer. Nothing is ever lent, so there is no
 default to chase.
 

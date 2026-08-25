@@ -4,7 +4,7 @@ Screen recording only. No face, no voice needed; captions carry it. Keep the
 terminal clean: no absolute paths, no other windows, notifications off.
 
 The story to land: **a relative abroad pays, and a device on the other side of
-the world stays switched on, with nobody in the middle deciding whether it did.**
+the world keeps working, with nobody in the middle deciding whether it did.**
 
 ## Before you press record
 
@@ -36,12 +36,13 @@ Then open `http://localhost:5330/?theme=light&lang=en#0xd221e0f424111cf15571bbea
 
 ## Shot list
 
-**0:00 Hook.** Open the delivery truck plan. It shows Running, 77,557.73 USDC
+**0:00 Hook.** Open the delivery truck plan. It shows Working, 77,557.73 USDC
 still to pay of 80,000, paid up until 28 September, and the Ethereum address to
 pay into. Caption:
 
-> This truck is running because a relative sent 342 dollars, then 1,500, then
-> 599. Every one of those is a real Ethereum payment, proven on Creditcoin.
+> This truck is still on the road because a relative sent 342 dollars, then
+> 1,500, then 599. Every one of those is a real Ethereum payment, proven on
+> Creditcoin.
 
 **0:20 The problem.** Deck slide 2. Caption:
 
@@ -58,10 +59,11 @@ second window:
 cd ~/hackathon-ctc/remit-to-own/relay && WALLET_ENV=~/.ato-wallet.env venv/bin/python watch_plan.py --plan 0xd221e0f424111cf15571bbea04012d2c319c9fc07b628e9455b22cc950cf68d2 --chainkey 1 --blocks 200 --submit
 ```
 
-It prints `device=OFF ... not started, no payment proven yet`, finds the
-transfer on Sepolia, proves it, and prints `device=ON ... runs 30d`. Within
-twelve seconds the page finds it too: an alert slides in, the state flips to
-Running, and the payment joins the record. Nobody touched the page. Caption:
+It prints `device=LOCKED ... not started, no payment proven yet`, finds the
+transfer on Sepolia, proves it, and prints `device=WORKING ... 30d left`.
+Within twelve seconds the page finds it too: an alert slides in, the state
+flips to Working, and the payment joins the record. Nobody touched the page.
+Caption:
 
 > Nobody pushed this. The page is watching the chain, and the payment announced
 > itself.
@@ -84,7 +86,7 @@ Caption: "The merchant reads one boolean. That is the whole integration."
 instalment blocks is filled, the balance is zero, and the address to pay into is
 gone because there is nothing left to pay. Caption:
 
-> When the price is covered, the device is theirs and never switches off again.
+> When the price is covered, the buyer owns it outright and it never locks again.
 
 **2:20 Both chains.** Deck slide 6, or the plan row on the page. Caption:
 
@@ -98,7 +100,7 @@ gone because there is nothing left to pay. Caption:
 - The reserved plan `0xd221e0f4…68d2` still reads **Not started**. If it does
   not, a payment has already been proven into it and there is no off to on shot
   left. Open a fresh one with `open_plan.py`.
-- The first lantern `0x51d036c6…c803` is already running on a proven payment, so
+- The first lantern `0x51d036c6…c803` is already working on a proven payment, so
   it carries real history if you want a second example.
 - Addresses and keys live in `~/.rto-sepolia.env` on the build server, mode 0600.
   Never show that file.

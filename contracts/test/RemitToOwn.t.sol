@@ -130,7 +130,7 @@ contract RemitToOwnTest is Test {
         assertEq(rto.amountRemaining(PLAN), 0);
 
         skip(3650 days);
-        assertTrue(rto.isActive(PLAN), "owned outright, never switches off again");
+        assertTrue(rto.isActive(PLAN), "owned outright, never locks again");
     }
 
     function test_overpayment_isCappedAtPrice() public {
