@@ -58,9 +58,9 @@ cast call 0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223 \
 
 Caption: "The merchant reads one boolean. That is the whole integration."
 
-**2:05 Paid off.** Switch the page to the motorcycle plan. The card inverts,
-every one of the twelve instalment blocks is filled, and there is no longer an
-address to pay to. Caption:
+**2:05 Paid off.** Switch the page to the motorcycle plan. Every one of the
+twelve instalment blocks is filled, the balance is zero, and the address to pay
+to is gone because there is nothing left to pay. Caption:
 
 > When the price is covered, the device is theirs and never switches off again.
 

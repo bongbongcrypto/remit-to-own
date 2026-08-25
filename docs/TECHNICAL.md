@@ -154,7 +154,11 @@ Decibels' 2024 off-grid survey (n=79,000+).
   rest was not charged rather than showing two numbers that disagree.
 
 Korean, Japanese, Chinese, and English are switchable, with dates and number
-formats following the chosen language rather than the browser's.
+formats following the chosen language rather than the browser's. English is the
+default: guessing from the browser would mean two people opening the same link
+see different pages, which is the wrong trade for a page whose claim is that
+anyone can check the same facts. `?lang=` and `?theme=` pin either for a
+recording, and a reader's choice is remembered.
 
 ## 3. Deployment
 

@@ -17,8 +17,6 @@
   --accent:#1b45d6; --accent-soft:#e8edfd;
   --on:#0a7355; --on-soft:#e2f2ec;
   --off:#8f5608; --off-soft:#faeedb;
-  --own-bg:#101725; --own-fg:#f5f7fa; --own-dim:#9aa6bc;
-  --own-sunk:#1b2432; --own-rule:#2b3648; --own-fill:#5eead4;
   --toast-bg:#101725; --toast-fg:#f5f7fa; --toast-dim:#a9b4c8; --toast-led:#22e08d;
   --shadow:0 1px 2px rgba(16,23,37,.05), 0 8px 24px -12px rgba(16,23,37,.14);
   --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -41,8 +39,6 @@ html[lang="ko"] body { word-break:keep-all; }
     --accent:#7f9fff; --accent-soft:#1a2440;
     --on:#3ec495; --on-soft:#102a23;
     --off:#e0a44a; --off-soft:#2b2213;
-    --own-bg:#f2f5fa; --own-fg:#101725; --own-dim:#56617a;
-    --own-sunk:#ffffff; --own-rule:#d8e0ec; --own-fill:#0a7355;
     --toast-bg:#1e2836; --toast-fg:#e9edf4; --toast-dim:#aab5c8; --toast-led:#3ec495;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
   }
@@ -54,8 +50,6 @@ html[lang="ko"] body { word-break:keep-all; }
   --accent:#7f9fff; --accent-soft:#1a2440;
   --on:#3ec495; --on-soft:#102a23;
   --off:#e0a44a; --off-soft:#2b2213;
-  --own-bg:#f2f5fa; --own-fg:#101725; --own-dim:#56617a;
-  --own-sunk:#ffffff; --own-rule:#d8e0ec; --own-fill:#0a7355;
   --toast-bg:#1e2836; --toast-fg:#e9edf4; --toast-dim:#aab5c8; --toast-led:#3ec495;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
 }
@@ -212,30 +206,11 @@ html[lang="ko"] .tagline, html[lang="ja"] .tagline, html[lang="zh"] .tagline {
 .btn:hover { border-color:var(--ink3); }
 .payto .note { font-size:12.5px; color:var(--ink3); }
 
-/* Owned inverts the statement against whichever theme is showing: the meter has
-   stopped mattering, so the card stops looking like the rest of the page. */
-.panel[data-owned="1"] { background:var(--own-bg); border-color:var(--own-bg);
-  color:var(--own-fg); }
-.panel[data-owned="1"] .substate,
-.panel[data-owned="1"] .hero .under,
-.panel[data-owned="1"] .lock,
-.panel[data-owned="1"] .fact .v small { color:var(--own-dim); }
-.panel[data-owned="1"] .label { color:var(--own-dim); }
-.panel[data-owned="1"] .hero .cur { color:var(--own-dim); }
-.panel[data-owned="1"] .facts { background:var(--own-rule); }
-.panel[data-owned="1"] .fact { background:var(--own-sunk); }
-.panel[data-owned="1"] .lock { background:var(--own-sunk);
-  border-color:var(--own-rule); }
-.panel[data-owned="1"] .lock strong { color:var(--own-fg); }
-.panel[data-owned="1"] .track.plain { background:var(--own-rule);
-  border-color:var(--own-rule); }
-.panel[data-owned="1"] .track .seg { background:var(--own-sunk);
-  border-color:var(--own-rule); }
-.panel[data-owned="1"] .track .seg::after,
-.panel[data-owned="1"] .track .fill { background:var(--own-fill); }
-.panel[data-owned="1"] .pill[data-s="owned"] { background:var(--own-fill);
-  color:var(--own-bg); }
-.panel[data-owned="1"] .hero .under .sep { background:var(--own-dim); }
+/* Paid off keeps the same card as every other state. Inverting the whole
+   surface read as a different page rather than a finished plan, and the content
+   already says it plainly: the pill, a balance of zero, every instalment block
+   filled, and no address left to pay. Only the edge changes. */
+.panel[data-owned="1"] { border-color:var(--accent); }
 
 /* ----------------------------------------------------------------- record */
 .rec-head { padding:17px 20px 15px; border-bottom:1px solid var(--rule);

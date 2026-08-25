@@ -51,7 +51,7 @@ default to chase.
   server.
 - ✅ Device page rebuilt: self discovering plans, instalment progress, payment
   record with running balances, live alerts, Korean, Japanese, Chinese, English,
-  WCAG AA verified in light, dark and the inverted owned state.
+  WCAG AA verified in light and dark, every state.
 - ✅ Adversarial QA on the page, relay and bot (2026-08-23). Thirteen defects
   found and closed, none of them by clicking around: a percentage that read 3.0
   where the truth was 3.1, a plan with no payment reporting that it stopped in
@@ -64,7 +64,7 @@ default to chase.
   both the relay and the Telegram bot. Verified by recomputing all six plans and
   thirteen payment rows independently from raw RPC and the indexer, eighteen
   adversarial render cases, a contrast sweep of every text node in light, dark
-  and inverted, and layout from 320 to 1024 pixels.
+  and layout from 320 to 1024 pixels.
 - ✅ Docs current: `README.md`, `docs/TECHNICAL.md`, `docs/SECURITY.md`,
   `docs/DEMO-SCRIPT.md`, `docs/deck.html` and a regenerated ten slide
   `docs/deck.pdf`.
