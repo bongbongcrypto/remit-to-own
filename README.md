@@ -18,16 +18,17 @@ device stays unlocked for the days that payment bought.
 
 ---
 
-## It already works (CC3 testnet, snapshot 2026-08-25)
+## It already works (CC3 testnet, snapshot 2026-08-27)
 
-Eight plans, fourteen proven payments, across **both source chains Attestcoin
+Nine plans, sixteen proven payments, across **both source chains Attestcoin
 attests**. The page reads all of it from the contract, so this table is a
 snapshot and the chain is the record.
 
 | Plan | Source | Payments proven | State |
 |---|---|---|---|
 | Solar lantern, 12 USDC | Sepolia | 3.00 | Running until 23 Sept |
-| Solar lantern, 12 USDC | Sepolia | none yet | Not started |
+| Solar lantern, 12 USDC | Sepolia | 3.00 | Running until 25 Sept |
+| Solar lantern, 12 USDC | Sepolia | 3.00 | Running until 25 Sept |
 | Delivery truck, 80,000 USDC | mainnet | 342.59, 1,500.00, 599.68 | Running until 28 Sept |
 | Delivery truck, 50,000 USDC | mainnet | 23.48, 1,490.71, 97.47, 107.41, 1,946.58 | Running until 16 Oct |
 | Cargo tricycle, 5,000 USDC | mainnet | 326.19, then the balance | Owned outright |
@@ -35,8 +36,9 @@ snapshot and the chain is the record.
 | Solar home system, 800 USDC | mainnet | one transfer, capped at the balance | Owned outright |
 | Motorcycle second hand, 1,200 USDC | mainnet | none yet | Not started |
 
-The two chains do different jobs. The **Sepolia** lantern is ours from the
-collection address to the payment, so the whole sequence can be run on demand.
+The two chains do different jobs. The **Sepolia** lanterns are ours from the
+collection address to the payment, so the whole sequence can be run on demand;
+the third lantern was paid and proven live on camera for the demo video.
 The **mainnet** plans point at busy addresses nobody here controls, which runs
 the proof path against live traffic at no cost. That is where the multi-token
 bug in `docs/TECHNICAL.md` section 5 came from.
@@ -53,6 +55,7 @@ by hand:
 | Contract deployed | 2026-08-21 15:54 UTC ([tx](https://creditcoin-testnet.blockscout.com/tx/0xb861aa022450528523eb3059a6edde43a0aa7dc7f7db889b2341f99ded3282f7)) |
 | First payment proven | 2026-08-21 15:56 UTC |
 | Fourteenth payment proven | 2026-08-24 11:51 UTC |
+| Sixteenth payment proven | 2026-08-26 18:22 UTC |
 
 Submissions for BUIDL CTC 2026 Fall opened on 13 August and close on 6
 September, so every one of those falls inside the window. The full event log is
