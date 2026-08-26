@@ -43,6 +43,21 @@ bug in `docs/TECHNICAL.md` section 5 came from.
 
 Contract: [`0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223`](https://creditcoin-testnet.blockscout.com/address/0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223)
 
+### When this was built
+
+The chain is the record, and block timestamps are not something anyone can set
+by hand:
+
+| | |
+|---|---|
+| Contract deployed | 2026-08-21 15:54 UTC ([tx](https://creditcoin-testnet.blockscout.com/tx/0xb861aa022450528523eb3059a6edde43a0aa7dc7f7db889b2341f99ded3282f7)) |
+| First payment proven | 2026-08-21 15:56 UTC |
+| Fourteenth payment proven | 2026-08-24 11:51 UTC |
+
+Submissions for BUIDL CTC 2026 Fall opened on 13 August and close on 6
+September, so every one of those falls inside the window. The full event log is
+on the [contract's page](https://creditcoin-testnet.blockscout.com/address/0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223?tab=logs).
+
 Check a device yourself:
 
 ```bash
