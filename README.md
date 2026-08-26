@@ -5,7 +5,7 @@ BUIDL CTC 2026 Fall.
 
 Buying a motorcycle or a solar home system on installments is ordinary across
 much of the world. So is having a relative abroad cover the payments. Those two
-facts do not compose today: the seller is at home, the money is abroad, and
+facts do not fit together today: the seller is at home, the money is abroad, and
 neither side can see the other's ledger. The gap gets filled by remittance
 operators and local agents who each take a cut and each have to be trusted.
 
@@ -100,7 +100,7 @@ poll the chain, flip the state, announce the payment.
 
 Building or flashing that controller is a job for the manufacturers who
 already make them, and it is out of scope here. What this submission proves is
-that the signal those devices obey can come from a verified chain instead of a
+that the signal those devices obey can come from proof verified on-chain instead of a
 company's word.
 
 ---
@@ -117,7 +117,7 @@ addresses. Money arriving there belongs to that plan and no other.
 
 **Never extending credit.** The contract does not lend, score, or trust anyone.
 Payment buys service time and nothing else, so there is nothing to collect later
-and nobody to chase. A borrower who stops paying simply stops having a working
+and nobody to chase. A customer who stops paying simply stops having a working
 device, which is how pay-as-you-go financing already works in the field. This is
 why the design has no default risk, no liquidation logic, and no reputation to
 game.
