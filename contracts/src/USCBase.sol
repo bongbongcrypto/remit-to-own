@@ -6,8 +6,8 @@ import {INativeQueryVerifier, NativeQueryVerifierLib} from "./VerifierInterface.
 // Vendored from @gluwa/usc-contracts (usc-testnet-bridge-examples). Handles the
 // Attestcoin proof-of-inclusion handshake: verify a source-chain tx against the
 // BlockProver precompile, guard replays by queryId, then hand the verified raw
-// transaction to the child's _processAndEmitEvent. ThreatRegistry supplies that
-// override with its judgment rules.
+// transaction to the child's _processAndEmitEvent. RemitToOwn supplies that
+// override with its payment-crediting rules.
 
 abstract contract USCBase {
     /// @notice The Native Query Verifier precompile instance (0x…0FD2).
