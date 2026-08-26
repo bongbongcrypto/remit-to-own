@@ -84,6 +84,26 @@ Japanese, Chinese and English.
 
 ---
 
+## How this reaches a real machine
+
+Pay-as-you-go financing already ships with remote lockout hardware. A solar
+home kit carries a controller chip that gates power output, and a financed
+motorcycle carries a GSM immobiliser that gates the ignition. Today those
+controllers obey one signal from the lender's server: paid or not paid.
+
+This contract replaces the server, not the hardware. A controller reads
+`isActive` over any public RPC, the same one-line call shown above. It is a
+read, so the device needs no wallet, no key, and no gas. The status page in
+`web/` runs exactly that loop in software, which is what the demo video shows:
+poll the chain, flip the state, announce the payment.
+
+Building or flashing that controller is a job for the manufacturers who
+already make them, and it is out of scope here. What this submission proves is
+that the signal those devices obey can come from a verified chain instead of a
+company's word.
+
+---
+
 ## Why this needs Attestcoin, and why it does not break
 
 Two design problems had to be solved, and the second is the one that sinks most
@@ -178,8 +198,10 @@ CC3 testnet, so live mainnet transfers are provable at no cost.
 ## Honest scope
 
 - Deployed on CC3 **testnet**, per hackathon rules.
-- The device lock is expressed as on-chain state (`isActive`). Wiring that to a
-  real device controller is a hardware integration, not part of this submission.
+- The device lock is expressed as on-chain state (`isActive`). The lockout
+  hardware already exists in this industry; flashing it to read the chain is an
+  integration for the manufacturers who make it, not part of this submission.
+  See "How this reaches a real machine" above.
 - For the demo, plans are opened against **live mainnet addresses that already
   receive USDC**, so that genuine, independently generated transfers drive the
   system. The proofs and the state changes are real; the payers are strangers
