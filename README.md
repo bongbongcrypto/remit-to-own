@@ -163,7 +163,7 @@ rejected on-chain.
 
 ## Layout
 
-- **`contracts/`**: Foundry. `RemitToOwn.sol` derives the official `USCBase`;
+- **`contracts/`**: Foundry. `RemitToOwn.sol` inherits the official `USCBase`;
   38 passing tests including an audit regression suite; deploy script.
 - **`relay/`**: Python. Watches a plan's collection address, fetches proofs, and
   submits them. Signs only on the build server, never on a developer machine.

@@ -12,7 +12,7 @@ proves.
 
 ## Layout
 
-- `contracts/` Foundry. `RemitToOwn.sol` derives the vendored official `USCBase`.
+- `contracts/` Foundry. `RemitToOwn.sol` inherits the vendored official `USCBase`.
   Two suites: product behaviour and an audit regression suite.
 - `relay/` Python. Watches a plan's collection address, fetches proofs, submits.
 - `detector/` not used in this project; scanning lives in `relay/watch_plan.py`.
