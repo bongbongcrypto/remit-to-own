@@ -57,8 +57,9 @@ by hand:
 | Fourteenth payment proven | 2026-08-24 11:51 UTC |
 | Sixteenth payment proven | 2026-08-26 18:22 UTC |
 
-Submissions for BUIDL CTC 2026 Fall opened on 13 August and close on 6
-September, so every one of those falls inside the window. The full event log is
+Submissions for BUIDL CTC 2026 Fall opened on 13 August and close on 13
+September (extended from 6 September), so every one of those falls inside the
+window. The full event log is
 on the [contract's page](https://creditcoin-testnet.blockscout.com/address/0x59FEF8771Da4248b89F7D6052b9d10fDfb13D223?tab=logs).
 
 Check a device yourself:
