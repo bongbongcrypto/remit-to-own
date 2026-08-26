@@ -8,6 +8,7 @@ much of the world. So is having a relative abroad cover the payments. Those two
 facts do not fit together today: the seller is at home, the money is abroad, and
 neither side can see the other's ledger. The gap gets filled by remittance
 operators and local agents who each take a cut and each have to be trusted.
+Stablecoins already move the money in minutes. What has not moved is the trust.
 
 Remit-to-Own closes it with proof. Each plan gets a dedicated collection address
 on Ethereum. A relative anywhere sends stablecoins there. The Attestcoin
