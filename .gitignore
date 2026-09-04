@@ -57,3 +57,9 @@ Thumbs.db
 # Internal production notes live in the master contest folder, not here
 PROGRESS.md
 docs/DEMO-SCRIPT.md
+
+# Internal working notes: not for a public repo
+CLAUDE.md
+AGENTS.md
+PROGRESS.md
+DEFERRED.md
